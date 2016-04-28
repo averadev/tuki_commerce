@@ -141,9 +141,7 @@ function scene:create( event )
     if OpenCamera then
         OpenCamera.init()
     end
-    --validate('1014858604001210-16') --UserReward
-    --validate('1014858604001210') --User
-    --validate('1013216233001528') --Cashier
+    
 end	
 
 -- Called immediately after scene has moved onscreen:

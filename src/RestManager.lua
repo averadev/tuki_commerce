@@ -6,8 +6,8 @@ local RestManager = {}
 	local crypto = require("crypto")
     local composer = require( "composer" )
 
-    local site = "http://192.168.1.66/tuki_ws/"
-    --local site = "http://mytuki.com/api/"
+    --local site = "http://192.168.1.66/tuki_ws/"
+    local site = "http://mytuki.com/api/"
 	
     -------------------------------------
     -- Encode URL
@@ -22,7 +22,6 @@ local RestManager = {}
           end
           return str    
     end
-    -- idUser/10154011451749218
 
     -------------------------------------
     -- Carga de la imagen del servidor o de TemporaryDirectory
@@ -97,6 +96,8 @@ local RestManager = {}
                 local data = json.decode(event.response)
                 if data.cashier then
                     toCashier(data.cashier)
+                elseif data.newUser then
+                    toNewUser(data.user)
                 elseif data.user then
                     toRewards(data.user)
                 else
@@ -190,6 +191,26 @@ local RestManager = {}
             else
                 local data = json.decode(event.response)
                 showRedenciones(data.items)
+            end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+	end
+
+    -------------------------------------
+    -- Actualizar Usuario
+    -- @param idUser Id Usuario
+    -- @param name Nombre
+    -- @param email Correo Electronico
+    ------------------------------------
+    RestManager.updateUser = function(idUser, name, email)
+		local url = site.."commerce/updateUser/format/json/idUser/"..idUser.."/name/"..urlencode(name).."/emai/"..urlencode(email)
+        
+        local function callback(event)
+            if ( event.isError ) then
+            else
+                local data = json.decode(event.response)
             end
             return true
         end
