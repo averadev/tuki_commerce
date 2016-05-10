@@ -100,20 +100,25 @@ end
 -- @param event objeto evento
 ------------------------------------
 function showReward(item)
+    local xtraW = 0
+    if intW > 1050 then
+        xtraW = (intW - 1050) / 5
+    end
+    
     if not(btnRedem) then
         grpRedem = display.newGroup()
         grpRedem.alpha = 0
         grpContent:insert( grpRedem )
         
         -- Detalle canje
-        local bgDetail = display.newRect( midW - 335, 350, 300, 64 )
+        local bgDetail = display.newRect( (midW - xtraW) - 335, 350, 300, 64 )
         bgDetail.alpha = .5
         bgDetail:setFillColor( 0 )
         grpRedem:insert( bgDetail )
         
         lblRedemTitle = display.newText({
             text = "", 
-            x = midW - 300, y = 350, 
+            x = (midW - xtraW) - 300, y = 350, 
             fontSize = 18, width = 220,
             font = native.systemFontBold,   
 
@@ -122,14 +127,14 @@ function showReward(item)
         grpRedem:insert(lblRedemTitle)
         
         
-        local bgPoints = display.newRect( midW - 450, 350, 70, 64 )
+        local bgPoints = display.newRect( (midW - xtraW) - 450, 350, 70, 64 )
         bgPoints.alpha = .5
         bgPoints:setFillColor( unpack(cMarine) )
         grpRedem:insert( bgPoints )
         
         lblRedemPoints = display.newText({
             text = "", 
-            x = midW - 450, y = 350, 
+            x = (midW - xtraW) - 450, y = 350, 
             fontSize = 30,
             font = native.systemFontBold,   
 
@@ -138,22 +143,22 @@ function showReward(item)
         grpRedem:insert(lblRedemPoints)
         
         -- Boton Canjear
-        btnRedem = display.newRoundedRect( midW - 335, 435, 320, 70, 5 )
+        btnRedem = display.newRoundedRect( (midW - xtraW) - 335, 435, 320, 70, 5 )
         btnRedem:setFillColor( 1 )
         grpRedem:insert( btnRedem )
         btnRedem:addEventListener( 'tap', tapRedimir)
         
-        local btnRedem2 = display.newRoundedRect( midW - 335, 435, 316, 66, 5 )
+        local btnRedem2 = display.newRoundedRect( (midW - xtraW) - 335, 435, 316, 66, 5 )
         btnRedem2:setFillColor( unpack(cMarine) )
         grpRedem:insert( btnRedem2 )
         
         local icoRedem = display.newImage( "img/icoRedem.png" )
-        icoRedem:translate(midW - 415, 435)
+        icoRedem:translate((midW - xtraW) - 415, 435)
         grpRedem:insert(icoRedem)
         
         local lblCanjear = display.newText({
             text = "CANJEAR", 
-            x = midW - 305, y = 435, 
+            x = (midW - xtraW) - 305, y = 435, 
             fontSize = 30,
             font = native.systemFontBold,   
 
@@ -177,7 +182,7 @@ function showReward(item)
     imgReward.alpha = 0
     imgReward.height = 225
     imgReward.width = 300
-    imgReward:translate(midW - 335, 270)
+    imgReward:translate((midW - xtraW) - 335, 270)
     grpRedem:insert(imgReward)
     imgReward:toBack()
     transition.to( imgReward, { time = 1000, alpha = 1 })
@@ -229,37 +234,42 @@ end
 ------------------------------------
 function showList()
     
+    local xtraW = 0
+    if intW > 1050 then
+        xtraW = (intW - 1050) / 5
+    end
+    
     grpContent = display.newGroup()
     grpContent.alpha = 0
     screen:insert(grpContent)
     
     local btnBack = display.newImage( "img/btnBack.png" )
-    btnBack.x = midW - 335
+    btnBack.x = (midW - xtraW) - 335
     btnBack.y = 80
     btnBack:addEventListener( 'tap', tapReturn)
     grpContent:insert(btnBack)
     
-    bgLogo1 = display.newRoundedRect( midW - 335, 350, 220, 220, 15 )
+    bgLogo1 = display.newRoundedRect( (midW - xtraW) - 335, 350, 220, 220, 15 )
     bgLogo1:setFillColor( unpack(cAqua) )
     grpContent:insert( bgLogo1 )
     
-    bgLogo2 = display.newRoundedRect( midW - 335, 350, 200, 200, 15 )
+    bgLogo2 = display.newRoundedRect( (midW - xtraW) - 335, 350, 200, 200, 15 )
     bgLogo2:setFillColor( 1 )
     grpContent:insert( bgLogo2 )
     
     imgLogo = display.newImage( "img/bgTmpLogo.png" )
-    imgLogo.x =  midW - 335
+    imgLogo.x =  (midW - xtraW) - 335
     imgLogo.y = 350
     grpContent:insert(imgLogo)
     
     local bgPointsList = display.newImage( "img/bgPointsList.png" )
-    bgPointsList.x =  midW - 335
+    bgPointsList.x =  (midW - xtraW) - 335
     bgPointsList.y = 600
     grpContent:insert(bgPointsList)
     
     local lblPoints = display.newText({
         text = userPoints, 
-        x =  midW - 335, y = 580,
+        x =  (midW - xtraW) - 335, y = 580,
         fontSize = 80,
         font = native.systemFontBold,   
         
@@ -269,7 +279,7 @@ function showList()
     
     local lblTitle = display.newText({
         text = "RECOMPENSAS DISPONIBLES:", 
-        x = midW + 150, y = 60,
+        x = (midW + xtraW) + 150, y = 60,
         fontSize = 30, width = 600,
         font = native.systemFontBold,   
         
@@ -286,7 +296,7 @@ function showList()
 		horizontalScrollDisabled = true,
         hideBackground = true
 	}
-    scrRewards.x = midW + 150
+    scrRewards.x = (midW + xtraW) + 150
 	grpContent:insert(scrRewards)
     RestManager.getRewards()
 end

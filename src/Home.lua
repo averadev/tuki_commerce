@@ -90,9 +90,9 @@ function toCamera(event)
     if OpenCamera then
         OpenCamera.init()
     else
-        validate('1014858604001214') --User
+        validate('4040000001201808') --User
         --validate('1013216233001528') --Cashier
-        --validate('1014858604001210-16') --UserReward
+        --validate('4040000001201808-16') --UserReward
     end
     return true
 end
@@ -156,6 +156,10 @@ end
 -- Called immediately on call
 function scene:create( event )
     screen = self.view
+    local xtraW = 0
+    if intW > 1050 then
+        xtraW = (intW - 1050) / 5
+    end
     
     local imgBg = display.newImage( "img/bg.png" )
     imgBg.x = midW
@@ -172,19 +176,19 @@ function scene:create( event )
     screen:insert(grpHome)
     
     local imgHomeText = display.newImage( "img/homeText.png" )
-    imgHomeText.x = midW - 240 
+    imgHomeText.x = (midW - xtraW) - 240 
     imgHomeText.y = 330 
     grpHome:insert(imgHomeText)
     
     local imgToCheckIn = display.newImage( "img/toCheckIn.png" )
-    imgToCheckIn.x = midW + 260 
+    imgToCheckIn.x = (midW + xtraW) + 260 
     imgToCheckIn.y = 330
     imgToCheckIn:addEventListener( 'tap', toCamera) 
     grpHome:insert(imgToCheckIn)
     
     local lbl1 = display.newText({
         text = "REGISTRA", 
-        x = midW + 320, y = 300,
+        x = (midW + xtraW) + 320, y = 300,
         width = 300,
         font = native.systemFontBold,   
         fontSize = 50, align = "left"
@@ -194,7 +198,7 @@ function scene:create( event )
     
     local lbl2 = display.newText({
         text = "TU  VISITA", 
-        x = midW + 320, y = 360,
+        x = (midW + xtraW) + 320, y = 360,
         width = 300,
         font = native.systemFont,   
         fontSize = 50, align = "left"

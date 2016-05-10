@@ -6,8 +6,8 @@ local RestManager = {}
 	local crypto = require("crypto")
     local composer = require( "composer" )
 
-    --local site = "http://192.168.1.66/tuki_ws/"
-    local site = "http://mytuki.com/api/"
+    local site = "http://192.168.1.67/tuki_ws/"
+    --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
     -- Encode URL
