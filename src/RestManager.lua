@@ -89,7 +89,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.validateQR = function(qr)
 		local url = site.."commerce/validateQR/format/json/idCommerce/1/qr/"..qr
-        
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else

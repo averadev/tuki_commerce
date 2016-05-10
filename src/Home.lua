@@ -90,7 +90,7 @@ function toCamera(event)
     if OpenCamera then
         OpenCamera.init()
     else
-        validate('1014858604001214') --User
+        --validate('1014858604001214') --User
         --validate('1013216233001528') --Cashier
         --validate('1014858604001210-16') --UserReward
     end
@@ -110,6 +110,31 @@ function validate(qr)
         invalidCard()
     end
     return true
+end
+
+-------------------------------------
+-- Mensaje Tarjeta Invalida
+------------------------------------
+function invalidCard()
+    local grpMsg = display.newGroup()
+    grpMsg.alpha = 0
+    screen:insert(grpMsg)
+    
+    local bgShadow = display.newRect( 0, 0, intW, intH )
+    bgShadow.alpha = .5
+    bgShadow.anchorX = 0
+    bgShadow.anchorY = 0
+    bgShadow:setFillColor( 0 )
+    grpMsg:insert(bgShadow)
+    
+    local imgBg = display.newImage( "img/invalidCard.png" )
+    imgBg.x = midW
+    imgBg.y = midH
+    grpMsg:insert(imgBg)
+    
+    transition.to( grpMsg, { alpha = 1, time = 1000 })
+    audio.play( fxError)
+    timer.performWithDelay( 4000, toHome )
 end
 
 -------------------------------------

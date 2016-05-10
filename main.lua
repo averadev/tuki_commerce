@@ -10,11 +10,11 @@ local composer = require( "composer" )
 
 
 local function onSystemEvent(event)
-	if event.type == "applicationResume" and "src.Camera" == composer.getSceneName( "current" )then
+    print("event.type:"..event.type)
+	if event.type == "applicationResume" and "src.Home" == composer.getSceneName( "current" )then
         config = DBManager.getSettings() 
+        print("config:"..config.qr)
         if config.qr == '' then
-            composer.removeScene( "src.Home" )
-            composer.gotoScene("src.Home", { time = 400, effect = "slideRight" })
         else
             print("Corona: "..config.qr)
             DBManager.clearQR()
