@@ -5,7 +5,7 @@ local fxTap = audio.loadSound( "fx/tap.wav")
 require('src.Globals')
 
 -- Grupos y Contenedores
-local screen, grpBottom, rewardsH, grpHome, grpMsgH
+local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM
 local timerBottom, lblHPoints, lblHDesc, imgHReward, loading
 local scene = composer.newScene()
 
@@ -86,13 +86,18 @@ end
 -- @param event objeto evento
 ------------------------------------
 function toCamera(event)
-    audio.play( fxTap )
-    if OpenCamera then
-        OpenCamera.init()
+    -- Validas conexion
+    if RestManager.networkConnection() then
+        audio.play( fxTap )
+        if OpenCamera then
+            OpenCamera.init()
+        else
+            validate('4040000001201808') --User
+            --validate('1013216233001528') --Cashier
+            --validate('4040000001201808-16') --UserReward
+        end
     else
-        validate('4040000001201808') --User
-        --validate('1013216233001528') --Cashier
-        --validate('4040000001201808-16') --UserReward
+        showMsg("Asegurese de estar conectado a internet")
     end
     return true
 end
@@ -178,6 +183,118 @@ function homeRewards(items)
     
 end
 
+-------------------------------------
+-- Muestra loading sprite
+-- @param isLoading activar/desactivar
+------------------------------------
+function showMsg(message)
+    if grpMsgM then
+        grpMsgM:removeSelf()
+        grpMsgM = nil
+    end
+
+    grpMsgM = display.newGroup()
+    grpMsgM.alpha = 0
+    screen:insert(grpMsgM)
+
+    function setDes(event)
+        return true
+    end
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:addEventListener( 'tap', setDes)
+    bg:setFillColor( 0 )
+    bg.alpha = .3
+    grpMsgM:insert(bg)
+
+    local bg = display.newRoundedRect( midW, midH, 404, 154, 15 )
+    bg:setFillColor( 1 )
+    grpMsgM:insert(bg)
+
+    local bg = display.newRoundedRect( midW, midH, 400, 150, 15 )
+    bg:setFillColor( unpack(cMarine) )
+    grpMsgM:insert(bg)
+
+    local lblMsg = display.newText({
+        text = message, 
+        x = midW, y = midH, width = 380, 
+        fontSize = 27, align = "center",
+        font = native.systemFontBold
+    })
+    lblMsg:setFillColor( 1 )
+    grpMsgM:insert(lblMsg)
+    
+    transition.to( grpMsgM, { alpha = 1, time = 400 } )
+    transition.to( grpMsgM, { alpha = 0, time = 400, delay = 2000 } )
+end
+
+-------------------------------------
+-- Muestra loading sprite
+-- @param isLoading activar/desactivar
+------------------------------------
+function showMsgE(message)
+    if grpMsgM then
+        grpMsgM:removeSelf()
+        grpMsgM = nil
+    end
+
+    grpMsgM = display.newGroup()
+    grpMsgM.alpha = 0
+    screen:insert(grpMsgM)
+
+    function setDes(event)
+        return true
+    end
+    local bg0 = display.newRect( midW, midH, intW, intH )
+    bg0:addEventListener( 'tap', setDes)
+    bg0:setFillColor( 0 )
+    bg0.alpha = .3
+    grpMsgM:insert(bg0)
+
+    local bg = display.newRoundedRect( midW, midH + 25, 404, 204, 15 )
+    bg:setFillColor( 1 )
+    grpMsgM:insert(bg)
+
+    local bg1 = display.newRoundedRect( midW, midH + 25, 400, 200, 15 )
+    bg1:setFillColor( unpack(cMarine) )
+    grpMsgM:insert(bg1)
+
+    local lblMsg = display.newText({
+        text = message, 
+        x = midW, y = midH - 20, width = 380, 
+        fontSize = 27, align = "center",
+        font = native.systemFontBold
+    })
+    lblMsg:setFillColor( 1 )
+    grpMsgM:insert(lblMsg)
+
+    function retry(event)
+        -- Verify connection
+        if RestManager.networkConnection() then
+            RestManager.getRewards()
+            transition.to( grpMsgM, { alpha = 0, time = 400 } )
+        else
+            transition.to( grpMsgM, { alpha = 0, time = 400 } )
+            transition.to( grpMsgM, { alpha = 1, time = 400, delay = 400 } )
+        end
+        return true
+    end
+    local bg2 = display.newRoundedRect( midW, midH + 60, 200, 60, 15 )
+    bg2:setFillColor( unpack(cAquaH) )
+    bg2:addEventListener( 'tap', retry)
+    grpMsgM:insert(bg2)
+
+    local lblMsgR = display.newText({
+        text = "Reintentar", 
+        x = midW, y = midH + 60, width = 380, 
+        fontSize = 27, align = "center",
+        font = native.systemFontBold
+    })
+    lblMsgR:setFillColor( 1 )
+    grpMsgM:insert(lblMsgR)
+    
+    transition.to( grpMsgM, { alpha = 1, time = 400 } )
+end
+
 -- Called immediately on call
 function scene:create( event )
     screen = self.view
@@ -202,18 +319,18 @@ function scene:create( event )
     
     local imgHomeText = display.newImage( "img/homeText.png" )
     imgHomeText.x = (midW - xtraW) - 240 
-    imgHomeText.y = 330 
+    imgHomeText.y = midH - 100
     grpHome:insert(imgHomeText)
     
     local imgToCheckIn = display.newImage( "img/toCheckIn.png" )
     imgToCheckIn.x = (midW + xtraW) + 260 
-    imgToCheckIn.y = 330
+    imgToCheckIn.y = midH - 100
     imgToCheckIn:addEventListener( 'tap', toCamera) 
     grpHome:insert(imgToCheckIn)
     
     local lbl1 = display.newText({
         text = "REGISTRA", 
-        x = (midW + xtraW) + 320, y = 300,
+        x = (midW + xtraW) + 320, y = midH - 130,
         width = 300,
         font = native.systemFontBold,   
         fontSize = 50, align = "left"
@@ -223,7 +340,7 @@ function scene:create( event )
     
     local lbl2 = display.newText({
         text = "TU  VISITA", 
-        x = (midW + xtraW) + 320, y = 360,
+        x = (midW + xtraW) + 320, y = midH - 70,
         width = 300,
         font = native.systemFont,   
         fontSize = 50, align = "left"
@@ -275,7 +392,12 @@ function scene:create( event )
     loading:setSequence("play")
     loading:play()
     
-    RestManager.getRewards()
+    -- Verify connection
+    if RestManager.networkConnection() then
+        RestManager.getRewards()
+    else
+        showMsgE("Asegurese de estar conectado a internet")
+    end
 end	
 
 -- Called immediately after scene has moved onscreen:
@@ -287,8 +409,7 @@ end
 function scene:hide( event )
     if ( event.phase == "will" ) then
         timer.cancel(timerBottom)
-    end
-    
+    end 
 end
 
 -- Destroy scene

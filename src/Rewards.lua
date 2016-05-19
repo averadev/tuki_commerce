@@ -3,12 +3,13 @@ local widget = require( "widget" )
 local RestManager = require( "src.RestManager" )
 local fxTap = audio.loadSound( "fx/tap.wav")
 local fxCash = audio.loadSound( "fx/cash.wav")
+local fxMetronome = audio.loadSound( "fx/metronome.wav")
 require('src.Globals')
 
 -- Grupos y Contenedores
 local screen, scrRewards, grpMsg, grpContent, grpRedem
 local scene = composer.newScene()
-local userPoints, userId
+local userPoints, userId, timerRew, timeCount
 local bgLogo1, bgLogo2, imgLogo, btnRedem, lblRedemTitle, lblRedemPoints, imgReward
 local rewards = {}
 
@@ -21,6 +22,21 @@ local rewards = {}
 function tapReturn(event)
     composer.removeScene( "src.Home" )
     composer.gotoScene("src.Home", { time = 400, effect = "slideRight" })
+    return true
+end
+
+-------------------------------------
+-- Cance Time
+-- @param event objeto evento
+------------------------------------
+function cancelTime(event)
+    timeCount = timeCount + 1
+    if timeCount == 5 then
+        tapReturn()
+    else
+        audio.play(fxMetronome)
+        timerRew = timer.performWithDelay( 1000, cancelTime, 1 )
+    end
     return true
 end
 
@@ -420,7 +436,9 @@ function scene:create( event )
     else
         transition.to( grpContent, { alpha = 1, time = 1000 })
     end
-    
+    -- Timer
+    timeCount = 0
+    timerRew = timer.performWithDelay( 25000, cancelTime, 1 )
 end	
 
 -- Called immediately after scene has moved onscreen:
@@ -429,6 +447,9 @@ end
 
 -- Hide scene
 function scene:hide( event )
+    if ( event.phase == "will" ) then
+        timer.cancel(timerRew)
+    end
 end
 
 -- Destroy scene

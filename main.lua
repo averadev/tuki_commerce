@@ -26,4 +26,9 @@ Runtime:addEventListener("system", onSystemEvent)
 
 
 DBManager.setupSquema() 
-composer.gotoScene("src.Home")
+local dbConfig = DBManager.getSettings()
+if dbConfig.idBranch == 0 then
+    composer.gotoScene("src.Login")
+else
+    composer.gotoScene("src.Home")
+end

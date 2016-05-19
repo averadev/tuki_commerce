@@ -5,6 +5,7 @@ local RestManager = {}
 	local json = require("json")
 	local crypto = require("crypto")
     local composer = require( "composer" )
+    local DBManager = require('src.DBManager')
 
     local site = "http://192.168.1.67/tuki_ws/"
     --local site = "http://mytuki.com/api/"
@@ -57,7 +58,11 @@ local RestManager = {}
             end
         else
             -- Dirigimos al metodo de home
-            homeRewards(obj.items)
+            if obj.method == "Home" then
+                toHome()
+            elseif obj.method == "HomeR" then
+                homeRewards(obj.items)
+            end
         end
     end
 
@@ -72,7 +77,7 @@ local RestManager = {}
             else
                 local data = json.decode(event.response)
                 if "src.Home" == composer.getSceneName( "current" ) then
-                    loadImage({idx = 0, path = "assets/img/api/rewards/", items = data.items})
+                    loadImage({idx = 0, method = 'HomeR', path = "assets/img/api/rewards/", items = data.items})
                 else
                     showRewards(data.items)
                 end
@@ -88,7 +93,7 @@ local RestManager = {}
     -- @param qr codigo tarjeta
     ------------------------------------
     RestManager.validateQR = function(qr)
-		local url = site.."commerce/validateQR/format/json/idCommerce/1/qr/"..qr
+		local url = site.."commerce/validateQR/format/json/idCommerce/1/idBranch/1/qr/"..qr
         print(url)
         local function callback(event)
             if ( event.isError ) then
@@ -144,8 +149,8 @@ local RestManager = {}
     -- @param points puntos a descontar
     ------------------------------------
     RestManager.insertRedemption = function(idUser, idReward, points)
-		local url = site.."commerce/insertRedemption/format/json/status/1/idCommerce/1/idReward/"..idReward.."/idUser/"..idUser.."/points/"..points
-        
+		local url = site.."commerce/insertRedemption/format/json/status/1/idCommerce/1/idBranch/1/idReward/"..idReward.."/idUser/"..idUser.."/points/"..points
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else
@@ -166,7 +171,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.setRedemption = function(status, idRedemption, idCashier, points)
 		local url = site.."commerce/setRedemption/format/json/status/"..status.."/idCommerce/1/idRedemption/"..idRedemption.."/idCashier/"..idCashier.."/points/"..points
-        
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else
@@ -184,8 +189,8 @@ local RestManager = {}
     -- @param points puntos a descontar
     ------------------------------------
     RestManager.getRedenciones = function(idUser, points)
-		local url = site.."commerce/getRedenciones/format/json/idCommerce/1"
-        
+		local url = site.."commerce/getRedenciones/format/json/idBranch/1"
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else
@@ -218,8 +223,42 @@ local RestManager = {}
         network.request( url, "GET", callback )
 	end
 
+    -------------------------------------
+    -- Verifica clave de acceso
+    -- @param key Clave de acceso
+    ------------------------------------
+    RestManager.verifyPassword = function(password)
+		local url = site.."commerce/verifyPassword/format/json/password/"..password
+        
+        local function callback(event)
+            if ( event.isError ) then
+            else
+                local data = json.decode(event.response)
+                if data.success then
+                    local br = data.branch[1]
+                    DBManager.updateConfig(br.idCommerce, br.idBranch, br.image)
+                    loadImage({idx = 0, method = 'Home', path = "assets/img/api/commerce/", items = data.branch})
+                else
+                    showMsg("Clave incorrecta :(")
+                end
+            end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+	end
 
-
+    --------------------------------4-----
+    -- Test connection
+    ------------------------------------
+    RestManager.networkConnection = function()
+        local netConn = require('socket').connect('www.google.com', 80)
+        if netConn == nil then
+            return false
+        end
+        netConn:close()
+        return true
+    end
 
     
 

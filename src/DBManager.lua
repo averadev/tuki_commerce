@@ -52,6 +52,14 @@ local dbManager = {}
 		closeConnection( )
 	end
 
+    dbManager.updateConfig = function(idCommerce, idBranch, logo)
+		openConnection( )
+        local query = ''
+        query = "UPDATE config SET idCommerce = "..idCommerce..", idBranch = "..idBranch..", logo = '"..logo.."';"
+        db:exec( query )
+		closeConnection( )
+	end
+
 	-- obtiene los datos de configuracion
 	dbManager.getSettings = function()
 		local result = {}
@@ -68,7 +76,7 @@ local dbManager = {}
 	dbManager.setupSquema = function()
 		openConnection( )
 		
-		local query = "CREATE TABLE IF NOT EXISTS config (id TEXT PRIMARY KEY, sucursal INTEGER, qr TEXT);"		
+		local query = "CREATE TABLE IF NOT EXISTS config (id TEXT PRIMARY KEY, idCommerce INTEGER, idBranch INTEGER, logo TEXT, qr TEXT);"		
         db:exec( query )
 
         for row in db:nrows("SELECT * FROM config;") do
@@ -76,7 +84,7 @@ local dbManager = {}
 			do return end
 		end
 
-        query = "INSERT INTO config VALUES (1, 1, '');"
+        query = "INSERT INTO config VALUES (1, 0, 0, '', '');"
         
 		db:exec( query )
     
