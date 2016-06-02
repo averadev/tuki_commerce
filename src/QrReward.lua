@@ -101,7 +101,7 @@ function scene:create( event )
     screen:insert(grpQrR)
     
     local btnBack = display.newImage( "img/btnBack.png" )
-    btnBack.x = midW - 335
+    btnBack.x = 170
     btnBack.y = 80
     btnBack:addEventListener( 'tap', tapReturn)
     grpQrR:insert(btnBack)

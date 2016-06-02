@@ -260,7 +260,7 @@ function showList()
     screen:insert(grpContent)
     
     local btnBack = display.newImage( "img/btnBack.png" )
-    btnBack.x = (midW - xtraW) - 335
+    btnBack.x = 170
     btnBack.y = 80
     btnBack:addEventListener( 'tap', tapReturn)
     grpContent:insert(btnBack)
@@ -448,7 +448,9 @@ end
 -- Hide scene
 function scene:hide( event )
     if ( event.phase == "will" ) then
-        timer.cancel(timerRew)
+        if timerRew then
+            timer.cancel(timerRew)
+        end
     end
 end
 

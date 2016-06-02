@@ -120,6 +120,20 @@ function showRedenciones(items)
         local bgPhoto = display.newImage( "img/bgPhoto.png" )
         bgPhoto:translate(70, curY)
         scrRedens:insert( bgPhoto )
+        
+        local userName = ''
+        if items[z].user then
+            userName = items[z].user
+        end
+        local lblUser = display.newText({
+            text = userName, 
+            x = 343, y = curY - 35,
+            fontSize = 20, width = 400, align = "left",
+            font = native.systemFont,   
+
+        })
+        lblUser:setFillColor( unpack(cGrayLow) )
+        scrRedens:insert( lblUser )
             
         local lblDate = display.newText({
             text = items[z].dateTexto, 
@@ -205,7 +219,7 @@ function scene:create( event )
     screen:insert(grpCashier)
     
     local btnBack = display.newImage( "img/btnBack.png" )
-    btnBack.x = midW - 335
+    btnBack.x = 170
     btnBack.y = 80
     btnBack:addEventListener( 'tap', tapReturn)
     grpCashier:insert(btnBack)

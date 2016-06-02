@@ -52,7 +52,7 @@ end
 -------------------------------------
 -- Error QR Reward
 ------------------------------------
-function qrError()
+function qrError(isCashier)
     if grpMsgH then
         grpMsgH:removeSelf()
         grpMsgH = nil
@@ -69,7 +69,12 @@ function qrError()
     bgShadow:setFillColor( 0 )
     grpMsgH:insert(bgShadow)
     
-    local imgBg = display.newImage( "img/invalidCard.png" )
+    local errorImg = "invalidCard.png"
+    if isCashier then
+        errorImg = "invalidCardCashier.png"
+    end
+    
+    local imgBg = display.newImage( "img/"..errorImg )
     imgBg.x = midW
     imgBg.y = midH
     grpMsgH:insert(imgBg)
@@ -92,9 +97,9 @@ function toCamera(event)
         if OpenCamera then
             OpenCamera.init()
         else
-            validate('4040000001201808') --User
+            validate('4040000001201919') --User
             --validate('1013216233001528') --Cashier
-            --validate('4040000001201808-16') --UserReward
+            --validate('4040000001201919-16') --UserReward
         end
     else
         showMsg("Asegurese de estar conectado a internet")
@@ -394,6 +399,7 @@ function scene:create( event )
     
     -- Verify connection
     if RestManager.networkConnection() then
+        RestManager.reloadConfig()
         RestManager.getRewards()
     else
         showMsgE("Asegurese de estar conectado a internet")

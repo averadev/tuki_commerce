@@ -6,8 +6,9 @@ local RestManager = {}
 	local crypto = require("crypto")
     local composer = require( "composer" )
     local DBManager = require('src.DBManager')
+    local dbConfig = DBManager.getSettings()
 
-    local site = "http://192.168.1.67/tuki_ws/"
+    local site = "http://192.168.1.68/tuki_ws/"
     --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
@@ -67,10 +68,17 @@ local RestManager = {}
     end
 
     -------------------------------------
+    -- Actualiza config
+    ------------------------------------
+    RestManager.reloadConfig = function()
+        dbConfig = DBManager.getSettings()  
+    end
+
+    -------------------------------------
     -- Obtener Recomensas
     ------------------------------------
     RestManager.getRewards = function()
-		local url = site.."commerce/getRewards/format/json/idCommerce/1"
+		local url = site.."commerce/getRewards/format/json/idCommerce/"..dbConfig.idCommerce
         
         local function callback(event)
             if ( event.isError ) then
@@ -93,20 +101,24 @@ local RestManager = {}
     -- @param qr codigo tarjeta
     ------------------------------------
     RestManager.validateQR = function(qr)
-		local url = site.."commerce/validateQR/format/json/idCommerce/1/idBranch/1/qr/"..qr
+		local url = site.."commerce/validateQR/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr
         print(url)
         local function callback(event)
             if ( event.isError ) then
             else
                 local data = json.decode(event.response)
                 if data.cashier then
-                    toCashier(data.cashier)
+                    if data.success then
+                        toCashier(data.cashier)
+                    else
+                        qrError(true)
+                    end
                 elseif data.newUser then
                     toNewUser(data.user)
                 elseif data.user then
                     toRewards(data.user)
                 else
-                    qrError()
+                    qrError(false)
                 end
             end
             return true
@@ -120,7 +132,7 @@ local RestManager = {}
     -- @param qr codigo tarjeta
     ------------------------------------
     RestManager.validateQrReward = function(qr)
-		local url = site.."commerce/validateQrReward/format/json/idCommerce/1/qr/"..qr
+		local url = site.."commerce/validateQrReward/format/json/idCommerce/"..dbConfig.idCommerce.."/qr/"..qr
         
         local function callback(event)
             if ( event.isError ) then
@@ -134,7 +146,7 @@ local RestManager = {}
                     end
                     
                 else
-                    qrError()
+                    qrError(false)
                 end
             end
             return true
@@ -149,7 +161,7 @@ local RestManager = {}
     -- @param points puntos a descontar
     ------------------------------------
     RestManager.insertRedemption = function(idUser, idReward, points)
-		local url = site.."commerce/insertRedemption/format/json/status/1/idCommerce/1/idBranch/1/idReward/"..idReward.."/idUser/"..idUser.."/points/"..points
+		local url = site.."commerce/insertRedemption/format/json/status/1/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/idReward/"..idReward.."/idUser/"..idUser.."/points/"..points
         print(url)
         local function callback(event)
             if ( event.isError ) then
@@ -170,7 +182,7 @@ local RestManager = {}
     -- @param points puntos a descontar
     ------------------------------------
     RestManager.setRedemption = function(status, idRedemption, idCashier, points)
-		local url = site.."commerce/setRedemption/format/json/status/"..status.."/idCommerce/1/idRedemption/"..idRedemption.."/idCashier/"..idCashier.."/points/"..points
+		local url = site.."commerce/setRedemption/format/json/status/"..status.."/idCommerce/"..dbConfig.idCommerce.."/idRedemption/"..idRedemption.."/idCashier/"..idCashier.."/points/"..points
         print(url)
         local function callback(event)
             if ( event.isError ) then
@@ -189,7 +201,7 @@ local RestManager = {}
     -- @param points puntos a descontar
     ------------------------------------
     RestManager.getRedenciones = function(idUser, points)
-		local url = site.."commerce/getRedenciones/format/json/idBranch/1"
+		local url = site.."commerce/getRedenciones/format/json/idBranch/"..dbConfig.idBranch
         print(url)
         local function callback(event)
             if ( event.isError ) then
