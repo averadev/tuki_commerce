@@ -14,6 +14,7 @@ local scene = composer.newScene()
 ------------------------------------
 function toHome()
     setLoading(false)
+    backTxtPositions()
     composer.removeScene( "src.Home" )
     composer.gotoScene("src.Home", { time = 0 })
     return true
