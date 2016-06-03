@@ -5,9 +5,19 @@ local fxTap = audio.loadSound( "fx/tap.wav")
 require('src.Globals')
 
 -- Grupos y Contenedores
-local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM
-local timerBottom, lblHPoints, lblHDesc, imgHReward, loading
+local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM, grpMsgS
+local timerBottom, lblHPoints, lblHDesc, imgHReward, loading, txtExit
 local scene = composer.newScene()
+
+-------------------------------------
+-- Nuevo Usuario
+-- @param item objeto usuario
+------------------------------------
+function toLogin()
+    composer.removeScene( "src.Login" )
+    composer.gotoScene("src.Login", { time = 0 })
+    return true
+end
 
 -------------------------------------
 -- Nuevo Usuario
@@ -189,6 +199,34 @@ function homeRewards(items)
 end
 
 -------------------------------------
+-- Cierra modal
+-- @param event objeto evento
+------------------------------------
+function closeMod(event)
+    transition.to( grpMsgS, { alpha = 0, time = 400, onComplete = function()
+        if txtExit then
+            txtExit:removeSelf()
+            txtExit = nil
+        end
+    end} )
+end
+
+-------------------------------------
+-- Validar salida
+-- @param event objeto evento
+------------------------------------
+function onTxtExit(event)
+    print(event.phase)
+    if ( "submitted" == event.phase ) then
+        RestManager.validateExit(txtExit.text)
+        -- Hide Keyboard
+        native.setKeyboardFocus(nil)
+        -- Hide modal
+        closeMod()
+    end
+end
+
+-------------------------------------
 -- Muestra loading sprite
 -- @param isLoading activar/desactivar
 ------------------------------------
@@ -230,6 +268,62 @@ function showMsg(message)
     
     transition.to( grpMsgM, { alpha = 1, time = 400 } )
     transition.to( grpMsgM, { alpha = 0, time = 400, delay = 2000 } )
+end
+
+-------------------------------------
+-- Autentificar salida
+-- @param isLoading activar/desactivar
+------------------------------------
+function showExit()
+    if grpMsgS then
+        grpMsgS:removeSelf()
+        grpMsgS = nil
+    end
+
+    grpMsgS = display.newGroup()
+    grpMsgS.alpha = 0
+    screen:insert(grpMsgS)
+
+    function setDes(event)
+        return true
+    end
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:addEventListener( 'tap', setDes)
+    bg:setFillColor( 0 )
+    bg.alpha = .3
+    grpMsgS:insert(bg)
+
+    local bg = display.newRoundedRect( midW, 160, 574, 204, 15 )
+    bg:setFillColor( 1 )
+    grpMsgS:insert(bg)
+
+    local bg = display.newRoundedRect( midW, 160, 570, 200, 15 )
+    bg:setFillColor( unpack(cMarine) )
+    grpMsgS:insert(bg)
+    
+    local iconClose = display.newImage( "img/iconClose.png" )
+    iconClose:translate(midW + 250, 85)
+    iconClose:addEventListener( 'tap', closeMod)
+    grpMsgS:insert(iconClose)
+
+    local lblMsg = display.newText({
+        text = "Codigo de seguridad de la sucursal", 
+        x = midW, y = 120, width = 550, 
+        fontSize = 27, align = "center",
+        font = native.systemFontBold
+    })
+    lblMsg:setFillColor( 1 )
+    grpMsgS:insert(lblMsg)
+    
+    -- TextField
+    txtExit = native.newTextField( midW, 190, 420, 55 )
+    txtExit.size = 23
+    txtExit.isSecure = true
+    txtExit.hasBackground = false
+    txtExit:addEventListener( "userInput", onTxtExit )
+	grpMsgS:insert(txtExit)
+    
+    transition.to( grpMsgS, { alpha = 1, time = 400 } )
 end
 
 -------------------------------------
@@ -317,6 +411,12 @@ function scene:create( event )
     imgClouds.anchorX = 0
     imgClouds.anchorY = 0
     screen:insert(imgClouds)
+    
+    local iconExit = display.newImage( "img/iconExit.png" )
+    iconExit.x = 30
+    iconExit.y = 40
+    iconExit:addEventListener( 'tap', showExit) 
+    screen:insert(iconExit)
     
     grpHome = display.newGroup()
     grpHome.alpha = 0

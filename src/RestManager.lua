@@ -8,7 +8,7 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    local site = "http://192.168.1.68/tuki_ws/"
+    local site = "http://tukicard.com/tuki_ws/"
     --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
@@ -250,6 +250,30 @@ local RestManager = {}
                     local br = data.branch[1]
                     DBManager.updateConfig(br.idCommerce, br.idBranch, br.image)
                     loadImage({idx = 0, method = 'Home', path = "assets/img/api/commerce/", items = data.branch})
+                else
+                    showMsg("Clave incorrecta :(")
+                end
+            end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+	end
+
+    -------------------------------------
+    -- Verifica salida de la sucursal
+    -- @param key Clave de acceso
+    ------------------------------------
+    RestManager.validateExit = function(password)
+		local url = site.."commerce/validateExit/format/json/idBranch/"..dbConfig.idBranch.."/password/"..password
+        print(url)
+        local function callback(event)
+            if ( event.isError ) then
+            else
+                local data = json.decode(event.response)
+                if data.success then
+                    DBManager.updateConfig(0, 0, '')
+                    toLogin()
                 else
                     showMsg("Clave incorrecta :(")
                 end
