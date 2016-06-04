@@ -305,18 +305,16 @@ function showExit()
     iconClose:translate(midW + 250, 85)
     iconClose:addEventListener( 'tap', closeMod)
     grpMsgS:insert(iconClose)
-
-    local lblMsg = display.newText({
-        text = "Codigo de seguridad de la sucursal", 
-        x = midW, y = 120, width = 550, 
-        fontSize = 27, align = "center",
-        font = native.systemFontBold
-    })
-    lblMsg:setFillColor( 1 )
-    grpMsgS:insert(lblMsg)
+    
+    -- Bg TextFields
+    local bgSignPass = display.newImage("img/contrasenia.png", true) 
+    bgSignPass.x = midW
+    bgSignPass.y = 170
+    bgSignPass.placeholder = "Clave sucursal"
+    grpMsgS:insert(bgSignPass)
     
     -- TextField
-    txtExit = native.newTextField( midW, 190, 420, 55 )
+    txtExit = native.newTextField( midW + 30, 170, 420, 45 )
     txtExit.size = 23
     txtExit.isSecure = true
     txtExit.hasBackground = false
