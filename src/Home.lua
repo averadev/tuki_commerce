@@ -203,6 +203,7 @@ end
 -- @param event objeto evento
 ------------------------------------
 function closeMod(event)
+    native.setKeyboardFocus(nil)
     transition.to( grpMsgS, { alpha = 0, time = 400, onComplete = function()
         if txtExit then
             txtExit:removeSelf()
@@ -219,9 +220,6 @@ function onTxtExit(event)
     print(event.phase)
     if ( "submitted" == event.phase ) then
         RestManager.validateExit(txtExit.text)
-        -- Hide Keyboard
-        native.setKeyboardFocus(nil)
-        -- Hide modal
         closeMod()
     end
 end
@@ -293,33 +291,56 @@ function showExit()
     bg.alpha = .3
     grpMsgS:insert(bg)
 
-    local bg = display.newRoundedRect( midW, 160, 574, 204, 15 )
+    local bg = display.newRoundedRect( midW, 150, 574, 224, 15 )
     bg:setFillColor( 1 )
     grpMsgS:insert(bg)
 
-    local bg = display.newRoundedRect( midW, 160, 570, 200, 15 )
+    local bg = display.newRoundedRect( midW, 150, 570, 220, 15 )
     bg:setFillColor( unpack(cMarine) )
     grpMsgS:insert(bg)
     
     local iconClose = display.newImage( "img/iconClose.png" )
-    iconClose:translate(midW + 250, 85)
+    iconClose:translate(midW + 250, 65)
     iconClose:addEventListener( 'tap', closeMod)
     grpMsgS:insert(iconClose)
     
     -- Bg TextFields
     local bgSignPass = display.newImage("img/contrasenia.png", true) 
     bgSignPass.x = midW
-    bgSignPass.y = 170
+    bgSignPass.y = 135
     bgSignPass.placeholder = "Clave sucursal"
     grpMsgS:insert(bgSignPass)
     
     -- TextField
-    txtExit = native.newTextField( midW + 30, 170, 420, 45 )
+    txtExit = native.newTextField( midW + 30, 135, 420, 45 )
     txtExit.size = 23
     txtExit.isSecure = true
     txtExit.hasBackground = false
     txtExit:addEventListener( "userInput", onTxtExit )
 	grpMsgS:insert(txtExit)
+    
+    -- Boton Canjear
+    local btnAccess = display.newRoundedRect( midW + 140, 220, 220, 60, 5 )
+    btnAccess:setFillColor( 1 )
+    btnAccess:addEventListener( 'tap', function()
+        RestManager.validateExit(txtExit.text)
+        closeMod()
+    end)
+    grpMsgS:insert( btnAccess )
+
+    local btnAcess2 = display.newRoundedRect( midW + 140, 220, 216, 55, 5 )
+    btnAcess2:setFillColor( unpack(cMarine) )
+    grpMsgS:insert( btnAcess2 )
+
+    local lblAccess = display.newText({
+        text = "Acceder", 
+        x = midW + 140, y = 220, 
+        fontSize = 27,
+        font = native.systemFontBold,   
+
+    })
+    lblAccess:setFillColor( 1 )
+    grpMsgS:insert(lblAccess)
     
     transition.to( grpMsgS, { alpha = 1, time = 400 } )
 end
