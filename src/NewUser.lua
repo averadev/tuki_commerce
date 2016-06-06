@@ -25,21 +25,10 @@ end
 -- @param event objeto usuario
 ------------------------------------
 function updateUser(event)
-    if txtName.text == '' or txtEmail.text == '' then
-        if txtName.text == '' then
-            transition.to( bgNombreR, { alpha = 1, time = 400 } )
-            transition.to( bgNombreR, { alpha = 0, time = 600, delay = 1500 } )
-        end
-        if txtEmail.text == '' then
-            transition.to( bgPassR, { alpha = 1, time = 400 } )
-            transition.to( bgPassR, { alpha = 0, time = 600, delay = 1500 } )
-        end
-    else
-        native.setKeyboardFocus(nil)
-        lblTitleNU.alpha = 1
-        transition.to( grpNewUser, { y = 0, time = 400, transition = easing.outExpo } )
-        updateUser(itemNU.id, txtName.text, txtEmail.text)
-    end 
+    native.setKeyboardFocus(nil)
+    lblTitleNU.alpha = 1
+    transition.to( grpNewUser, { y = 0, time = 400, transition = easing.outExpo } )
+    RestManager.updateUser(itemNU.id, txtName.text, txtEmail.text)
     return true
 end
 
@@ -93,50 +82,24 @@ function scene:create( event )
     lblTitleNU:setFillColor( 1 )
     grpNewUser:insert(lblTitleNU)
     
-    local bgNombre1 = display.newRoundedRect( midW, midH - 100, 550, 90, 10 )
-    bgNombre1:setFillColor( unpack(cMarine) )
-    grpNewUser:insert( bgNombre1 )
-    
-    bgNombreR = display.newRoundedRect( midW, midH - 100, 550, 90, 10 )
-    bgNombreR:setFillColor( .7,0,0 )
-    bgNombreR.alpha = 0
-    grpNewUser:insert( bgNombreR )
-    
-    local bgNombre2 = display.newRoundedRect( midW, midH - 100, 540, 80, 10 )
-    bgNombre2:setFillColor( 1 )
-    grpNewUser:insert( bgNombre2 )
-    
-    local bgPass1 = display.newRoundedRect( midW, midH + 20, 550, 90, 10 )
-    bgPass1:setFillColor( unpack(cMarine) )
-    grpNewUser:insert( bgPass1 )
-    
-    bgPassR = display.newRoundedRect( midW, midH + 20, 550, 90, 10 )
-    bgPassR:setFillColor( .7,0,0 )
-    bgPassR.alpha = 0
-    grpNewUser:insert( bgPassR )
-    
-    local bgPass2 = display.newRoundedRect( midW, midH + 20, 540, 80, 10 )
-    bgPass2:setFillColor( 1 )
-    grpNewUser:insert( bgPass2 )
-    
     -- Icons
-    local iconUser = display.newImage( "img/iconUser.png" )
-    iconUser:translate( midW - 225, midH - 100 )
+    local iconUser = display.newImage( "img/usuario.png" )
+    iconUser:translate( midW, midH - 100 )
     grpNewUser:insert(iconUser)
     
-    local iconEmail = display.newImage( "img/iconEmail.png" )
-    iconEmail:translate( midW - 225, midH + 20 )
+    local iconEmail = display.newImage( "img/email.png" )
+    iconEmail:translate( midW, midH + 20 )
     grpNewUser:insert(iconEmail)
     
     -- TextFields Create
-    txtName = native.newTextField( midW + 25, midH - 100, 450, 55 )
+    txtName = native.newTextField( midW + 30, midH - 100, 420, 55 )
     txtName.size = 30
     txtName.hasBackground = false
     txtName.placeholder = "Nombre"
     txtName:addEventListener( "userInput", onTxtFocus )
 	grpNewUser:insert(txtName)
     
-    txtEmail = native.newTextField( midW + 25, midH + 20, 450, 55 )
+    txtEmail = native.newTextField( midW + 30, midH + 20, 420, 55 )
     txtEmail.size = 30
     txtEmail.inputType = "email"
     txtEmail.hasBackground = false

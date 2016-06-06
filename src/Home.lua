@@ -6,7 +6,7 @@ require('src.Globals')
 
 -- Grupos y Contenedores
 local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM, grpMsgS
-local timerBottom, lblHPoints, lblHDesc, imgHReward, loading, txtExit
+local timerBottom, lblHPoints, lblHDesc, imgHReward, loading, txtExit, itsPoints = false
 local scene = composer.newScene()
 
 -------------------------------------
@@ -107,8 +107,8 @@ function toCamera(event)
         if OpenCamera then
             OpenCamera.init()
         else
-            validate('4040000001201919') --User
-            --validate('1013216233001528') --Cashier
+            validate('4040000001201932') --User
+            --validate('1017854233001528') --Cashier
             --validate('4040000001201919-16') --UserReward
         end
     else
@@ -122,7 +122,10 @@ end
 -- @param event objeto evento
 ------------------------------------
 function validate(qr)
-    if string.len(qr) == 16 then
+    if itsPoints then
+        itsPoints = false
+        RestManager.checkPoints(qr)
+    elseif string.len(qr) == 16 then
         RestManager.validateQR(qr)
     elseif string.len(qr) > 16 then
         RestManager.validateQrReward(qr)
@@ -222,6 +225,48 @@ function onTxtExit(event)
         RestManager.validateExit(txtExit.text)
         closeMod()
     end
+end
+
+-------------------------------------
+-- Muestra los puntos disponibles
+-- @param isLoading activar/desactivar
+------------------------------------
+function showPoints(points)
+    if grpMsgM then
+        grpMsgM:removeSelf()
+        grpMsgM = nil
+    end
+
+    grpMsgM = display.newGroup()
+    grpMsgM.alpha = 0
+    screen:insert(grpMsgM)
+
+    function setDes(event)
+        return true
+    end
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:addEventListener( 'tap', setDes)
+    bg:setFillColor( 0 )
+    bg.alpha = .7
+    grpMsgM:insert(bg)
+
+    local bgPoints = display.newImage( "img/bgPointsList.png" )
+    bgPoints:translate(midW, midH)
+    bgPoints.height = 300
+    bgPoints.width = 300
+    grpMsgM:insert(bgPoints)
+
+    local lblMsg = display.newText({
+        text = points, 
+        x = midW, y = midH - 30,
+        fontSize = 110, align = "center",
+        font = native.systemFontBold
+    })
+    lblMsg:setFillColor( unpack(cMarine) )
+    grpMsgM:insert(lblMsg)
+    
+    transition.to( grpMsgM, { alpha = 1, time = 400 } )
+    transition.to( grpMsgM, { alpha = 0, time = 400, delay = 2000 } )
 end
 
 -------------------------------------
@@ -436,6 +481,15 @@ function scene:create( event )
     iconExit.y = 40
     iconExit:addEventListener( 'tap', showExit) 
     screen:insert(iconExit)
+    
+    local iconPoints = display.newImage( "img/iconPoints.png" )
+    iconPoints.x = intW - 30
+    iconPoints.y = 40
+    iconPoints:addEventListener( 'tap', function()
+        itsPoints = true
+        toCamera()
+    end) 
+    screen:insert(iconPoints)
     
     grpHome = display.newGroup()
     grpHome.alpha = 0

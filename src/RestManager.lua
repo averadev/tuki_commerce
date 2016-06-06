@@ -8,7 +8,7 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    local site = "http://tukicard.com/tuki_ws/"
+    local site = "http://localhost/tuki_ws/"
     --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
@@ -95,6 +95,25 @@ local RestManager = {}
         -- Do request
         network.request( url, "GET", callback )
 	end
+
+    -------------------------------------
+    -- Validar QR
+    -- @param qr codigo tarjeta
+    ------------------------------------
+    RestManager.checkPoints = function(qr)
+        local url = site.."commerce/checkPoints/format/json/idCommerce/"..dbConfig.idCommerce.."/qr/"..qr
+        print(url)
+        local function callback(event)
+            if ( event.isError ) then
+            else
+                local data = json.decode(event.response)
+                showPoints(data.points)
+            end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+    end
 
     -------------------------------------
     -- Validar QR
@@ -222,12 +241,13 @@ local RestManager = {}
     -- @param email Correo Electronico
     ------------------------------------
     RestManager.updateUser = function(idUser, name, email)
-		local url = site.."commerce/updateUser/format/json/idUser/"..idUser.."/name/"..urlencode(name).."/emai/"..urlencode(email)
-        
+		local url = site.."commerce/updateUser/format/json/idUser/"..idUser.."/name/"..urlencode(name).."/email/"..urlencode(email)
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else
                 local data = json.decode(event.response)
+                toRewards()
             end
             return true
         end
