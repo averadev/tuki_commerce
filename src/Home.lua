@@ -107,9 +107,9 @@ function toCamera(event)
         if OpenCamera then
             OpenCamera.init()
         else
-            validate('4040000001201932') --User
-            --validate('1017854233001528') --Cashier
-            --validate('4040000001201919-16') --UserReward
+            --validate('4040000001201932') --User
+            --validate('1021444472002964') --Cashier
+            validate('4000000000001641-27') --UserReward
         end
     else
         showMsg("Asegurese de estar conectado a internet")

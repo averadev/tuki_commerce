@@ -125,12 +125,8 @@ function scene:create( event )
     bgImg:setFillColor( unpack(cAqua) )
     grpQrR:insert( bgImg )
     
-    local imgReward = display.newImage( rewardQrR.image, system.TemporaryDirectory )
-    imgReward.width = 440
-    imgReward.height = 330
-    imgReward.x = midW - 200
-    imgReward.y = midH + 50
-    grpQrR:insert(imgReward)
+    getImgR(rewardQrR.image, grpQrR, midW - 200, midH + 50, 440, 330)
+    
     
     local middlePoints = display.newImage( "img/middlePoints.png" )
     middlePoints.x = midW - 330

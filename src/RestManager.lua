@@ -8,7 +8,7 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    local site = "http://localhost/tuki_ws/"
+    local site = "http://192.168.1.102/tuki_ws/"
     --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
@@ -66,6 +66,38 @@ local RestManager = {}
             end
         end
     end
+
+    -------------------------------------
+    -- Carga de la imagen del servidor o de TemporaryDirectory
+    -- @param str string to encode
+    ------------------------------------
+    function getImgR(img, parent, x, y, w, h)
+        local path = system.pathForFile( img, system.TemporaryDirectory )
+        local fhd = io.open( path )
+        if fhd then
+            fhd:close()
+            local imgReward = display.newImage( img, system.TemporaryDirectory )
+            imgReward.width = w
+            imgReward.height = h
+            imgReward.x = x
+            imgReward.y = y
+            parent:insert(imgReward)
+        else
+            local function imageListener( event )
+                if ( event.isError ) then
+                else
+                    event.target.width = w
+                    event.target.height = h
+                    event.target.x = x
+                    event.target.y = y
+                    parent:insert(event.target)
+                end
+            end
+            -- Descargamos de la nube
+            display.loadRemoteImage( site.."assets/img/api/rewards/"..img, "GET", imageListener, img, system.TemporaryDirectory ) 
+        end
+    end    
+
 
     -------------------------------------
     -- Actualiza config
@@ -152,7 +184,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.validateQrReward = function(qr)
 		local url = site.."commerce/validateQrReward/format/json/idCommerce/"..dbConfig.idCommerce.."/qr/"..qr
-        
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else
@@ -165,7 +197,11 @@ local RestManager = {}
                     end
                     
                 else
-                    qrError(false)
+                    if data.mensaje then
+                        showMsg(data.mensaje)
+                    else
+                        qrError(false)
+                    end
                 end
             end
             return true
@@ -190,7 +226,7 @@ local RestManager = {}
             return true
         end
         -- Do request
-        print(url)
+        
         network.request( url, "GET", callback )
 	end
 
