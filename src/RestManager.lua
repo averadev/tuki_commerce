@@ -1,6 +1,7 @@
     --Include sqlite
 local RestManager = {}
 
+    require('src.Globals')
 	local mime = require("mime")
 	local json = require("json")
 	local crypto = require("crypto")
@@ -8,7 +9,7 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    local site = "http://192.168.1.102/tuki_ws/"
+    local site = "http://localhost/tuki_ws/"
     --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
@@ -111,12 +112,18 @@ local RestManager = {}
     ------------------------------------
     RestManager.getRewards = function()
 		local url = site.."commerce/getRewards/format/json/idCommerce/"..dbConfig.idCommerce
-        
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else
                 local data = json.decode(event.response)
                 if "src.Home" == composer.getSceneName( "current" ) then
+                    if data.logo[1] then
+                        if data.logo[1].image then
+                            logoCom = data.logo[1].image
+                        end
+                    end
+                    loadImage({idx = 0, method = '', path = "assets/img/api/commerce/", items = data.logo})
                     loadImage({idx = 0, method = 'HomeR', path = "assets/img/api/rewards/", items = data.items})
                 else
                     showRewards(data.items)
@@ -297,7 +304,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.verifyPassword = function(password)
 		local url = site.."commerce/verifyPassword/format/json/password/"..password
-        
+        print(url)
         local function callback(event)
             if ( event.isError ) then
             else

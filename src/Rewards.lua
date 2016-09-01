@@ -273,7 +273,11 @@ function showList()
     bgLogo2:setFillColor( 1 )
     grpContent:insert( bgLogo2 )
     
-    imgLogo = display.newImage( "img/bgTmpLogo.png" )
+    if logoCom == '' then
+        imgLogo = display.newImage( "img/bgTmpLogo.png" )
+    else
+        imgLogo = display.newImage( logoCom, system.TemporaryDirectory )
+    end
     imgLogo.x =  (midW - xtraW) - 335
     imgLogo.y = 350
     grpContent:insert(imgLogo)
