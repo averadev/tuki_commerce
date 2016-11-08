@@ -129,7 +129,7 @@ function showRedenciones(items)
             text = userName, 
             x = 343, y = curY - 35,
             fontSize = 20, width = 400, align = "left",
-            font = native.systemFont,   
+            font = fontRegular,   
 
         })
         lblUser:setFillColor( unpack(cGrayLow) )
@@ -139,7 +139,7 @@ function showRedenciones(items)
             text = items[z].dateTexto, 
             x = 470, y = curY - 35,
             fontSize = 20, width = 400, align = "right",
-            font = native.systemFont,   
+            font = fontRegular,   
 
         })
         lblDate:setFillColor( unpack(cGrayLow) )
@@ -149,7 +149,7 @@ function showRedenciones(items)
             text = items[z].reward,
             x = 410, y = curY + 5,
             fontSize = 26, width = 530, align = "left",
-            font = native.systemFontBold,   
+            font = fontSemiBold,   
 
         })
         lblTitle:setFillColor( unpack(cMarine) )
@@ -184,7 +184,7 @@ function showRedenciones(items)
         text = "",
         x = 350, y = 0,
         fontSize = 28, width = 280,
-        font = native.systemFontBold,   
+        font = fontSemiBold,   
 
     })
     lblRTitle:setFillColor( 1 )
@@ -228,7 +228,7 @@ function scene:create( event )
         text = "RECOMPENSAS LISTAS PARA CANJEAR:", 
         x = midW, y = midH -255,
         fontSize = 28, width = 700, align = "left",
-        font = native.systemFontBold,   
+        font = fontSemiBold,   
         
     })
     lblTitle.anchorY = 0

@@ -110,7 +110,7 @@ function scene:create( event )
         text = "ESTAS POR OBTENER LA SIGUIENTE RECOMPENSA:", 
         x = midW, y = midH -200,
         fontSize = 28, width = 850, align = "left",
-        font = native.systemFontBold,   
+        font = fontSemiBold,   
         
     })
     lblTitle.anchorY = 0
@@ -136,7 +136,7 @@ function scene:create( event )
     local lblPoints = display.newText({
         text = rewardQrR.points, 
         x = midW - 330, y = midH + 169,
-        fontSize = 50, font = native.systemFontBold
+        fontSize = 50, font = fontSemiBold
     })
     lblPoints:setFillColor( 1 )
     grpQrR:insert(lblPoints)
@@ -144,7 +144,7 @@ function scene:create( event )
     local lblPointsD = display.newText({
         text = "PUNTOS", 
         x = midW - 330, y = midH + 200,
-        fontSize = 20, font = native.systemFontBold
+        fontSize = 20, font = fontSemiBold
     })
     lblPointsD:setFillColor( 1 )
     grpQrR:insert(lblPointsD)
@@ -153,7 +153,7 @@ function scene:create( event )
         text = rewardQrR.name, 
         x = midW + 250, y = midH - 120,
         fontSize = 28, width = 400, align = "left",
-        font = native.systemFontBold
+        font = fontSemiBold
     })
     lblName.anchorY = 0
     lblName:setFillColor( 1 )
@@ -165,7 +165,7 @@ function scene:create( event )
         text = rewardQrR.description, 
         x = midW + 250, y = posYD,
         fontSize = 22, width = 400, align = "left",
-        font = native.systemFont, height = 200
+        font = fontRegular, height = 200
     })
     lblDesc.anchorY = 0
     lblDesc:setFillColor( 1 )
@@ -190,7 +190,7 @@ function scene:create( event )
     local lblConfirmar1 = display.newText({
         text = "No, ver otras recompensas", 
         x = midW + 140, y = midH + 175, width = 170,
-        fontSize = 25, font = native.systemFont, align = 'center'
+        fontSize = 25, font = fontRegular, align = 'center'
     })
     lblConfirmar1:setFillColor( .1 )
     grpQrR:insert(lblConfirmar1)
@@ -198,7 +198,7 @@ function scene:create( event )
     local lblConfirmar = display.newText({
         text = "¡CONFIRMAR!", 
         x = midW + 350, y = midH + 175,
-        fontSize = 25, font = native.systemFontBold
+        fontSize = 25, font = fontSemiBold
     })
     lblConfirmar:setFillColor( .1 )
     grpQrR:insert(lblConfirmar)

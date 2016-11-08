@@ -108,7 +108,7 @@ function toCamera(event)
             OpenCamera.init()
         else
             --validate('4000000000001641') --User
-            validate('1014832723003398') --Cashier
+            validate('1021238449002901') --Cashier
             --validate('4000000000001641-27') --UserReward
         end
     else
@@ -175,10 +175,10 @@ function changeReward()
         imgHReward = nil
     end
     imgHReward = display.newImage( rewardsH[random].image, system.TemporaryDirectory )
-    imgHReward.height = 171
-    imgHReward.width = 228
-    imgHReward.x = intW - 140
-    imgHReward.y = intH - 110
+    imgHReward.height = 204
+    imgHReward.width = 272
+    imgHReward.x = intW - 160
+    imgHReward.y = intH - 140
     grpBottom:insert(imgHReward)
     
     grpBottom.alpha = 0
@@ -249,21 +249,30 @@ function showPoints(points)
     bg:setFillColor( 0 )
     bg.alpha = .7
     grpMsgM:insert(bg)
-
-    local bgPoints = display.newImage( "img/bgPointsList.png" )
+    
+    local bgPoints = display.newImage( "img/bgPointsHome.png" )
     bgPoints:translate(midW, midH)
     bgPoints.height = 300
     bgPoints.width = 300
     grpMsgM:insert(bgPoints)
 
-    local lblMsg = display.newText({
+    local lblMsg1 = display.newText({
         text = points, 
         x = midW, y = midH - 30,
         fontSize = 110, align = "center",
-        font = native.systemFontBold
+        font = fontBold
     })
-    lblMsg:setFillColor( unpack(cMarine) )
-    grpMsgM:insert(lblMsg)
+    lblMsg1:setFillColor( unpack(cWhite) )
+    grpMsgM:insert(lblMsg1)
+
+    local lblMsg2 = display.newText({
+        text = "PUNTOS", 
+        x = midW, y = midH + 60,
+        fontSize = 40, align = "center",
+        font = fontSemiRegular
+    })
+    lblMsg2:setFillColor( unpack(cWhite) )
+    grpMsgM:insert(lblMsg2)
     
     transition.to( grpMsgM, { alpha = 1, time = 400 } )
     transition.to( grpMsgM, { alpha = 0, time = 400, delay = 2000 } )
@@ -293,20 +302,20 @@ function showMsg(message)
     grpMsgM:insert(bg)
 
     local bg = display.newRoundedRect( midW, midH, 404, 154, 15 )
-    bg:setFillColor( 1 )
+    bg:setFillColor( unpack(cTurquesa) )
     grpMsgM:insert(bg)
 
     local bg = display.newRoundedRect( midW, midH, 400, 150, 15 )
-    bg:setFillColor( unpack(cMarine) )
+    bg:setFillColor( unpack(cWhite) )
     grpMsgM:insert(bg)
 
     local lblMsg = display.newText({
         text = message, 
         x = midW, y = midH, width = 380, 
         fontSize = 27, align = "center",
-        font = native.systemFontBold
+        font = fontSemiBold
     })
-    lblMsg:setFillColor( 1 )
+    lblMsg:setFillColor( unpack(cPurPle) )
     grpMsgM:insert(lblMsg)
     
     transition.to( grpMsgM, { alpha = 1, time = 400 } )
@@ -336,13 +345,13 @@ function showExit()
     bg.alpha = .3
     grpMsgS:insert(bg)
 
-    local bg = display.newRoundedRect( midW, 150, 574, 224, 15 )
-    bg:setFillColor( 1 )
+    local bg = display.newRoundedRect( midW, 150, 578, 228, 10 )
+    bg:setFillColor( unpack(cTurquesa) )
     grpMsgS:insert(bg)
 
-    local bg = display.newRoundedRect( midW, 150, 570, 220, 15 )
-    bg:setFillColor( unpack(cMarine) )
-    grpMsgS:insert(bg)
+    local bg2 = display.newRoundedRect( midW, 150, 570, 220, 10 )
+    bg2:setFillColor( unpack(cWhite) )
+    grpMsgS:insert(bg2)
     
     local iconClose = display.newImage( "img/iconClose.png" )
     iconClose:translate(midW + 250, 65)
@@ -350,41 +359,42 @@ function showExit()
     grpMsgS:insert(iconClose)
     
     -- Bg TextFields
-    local bgSignPass = display.newImage("img/contrasenia.png", true) 
-    bgSignPass.x = midW
-    bgSignPass.y = 135
-    bgSignPass.placeholder = "Clave sucursal"
+    local bgField1 = display.newRoundedRect( midW, 125, 474, 74, 5 )
+    bgField1:setFillColor( unpack(cTurquesa) )
+    grpMsgS:insert( bgField1 )
+    local bgField2 = display.newRoundedRect( midW, 125, 470, 70, 5 )
+    bgField2:setFillColor( unpack(cWhite) )
+    grpMsgS:insert( bgField2 )
+    local bgSignPass = display.newImage("img/iconCandado.png", true) 
+    bgSignPass.x = midW - 200
+    bgSignPass.y = 125
     grpMsgS:insert(bgSignPass)
     
     -- TextField
-    txtExit = native.newTextField( midW + 30, 135, 420, 45 )
+    txtExit = native.newTextField( midW + 20, 125, 400, 45 )
     txtExit.size = 23
     txtExit.isSecure = true
     txtExit.hasBackground = false
+    txtExit.placeholder = "Clave sucursal"
     txtExit:addEventListener( "userInput", onTxtExit )
 	grpMsgS:insert(txtExit)
     
-    -- Boton Canjear
-    local btnAccess = display.newRoundedRect( midW + 140, 220, 220, 60, 5 )
-    btnAccess:setFillColor( 1 )
+    -- Boton Salir
+    local btnAccess = display.newRoundedRect( midW, 210, 470, 55, 5 )
+    btnAccess:setFillColor( unpack(cTurquesa) )
     btnAccess:addEventListener( 'tap', function()
         RestManager.validateExit(txtExit.text)
         closeMod()
     end)
     grpMsgS:insert( btnAccess )
-
-    local btnAcess2 = display.newRoundedRect( midW + 140, 220, 216, 55, 5 )
-    btnAcess2:setFillColor( unpack(cMarine) )
-    grpMsgS:insert( btnAcess2 )
-
     local lblAccess = display.newText({
-        text = "Acceder", 
-        x = midW + 140, y = 220, 
-        fontSize = 27,
-        font = native.systemFontBold,   
+        text = "LOGOUT", 
+        x = midW, y = 210, 
+        fontSize = 30, width = 300,
+        font = fontSemiBold, align = 'center'
 
     })
-    lblAccess:setFillColor( 1 )
+    lblAccess:setFillColor( unpack(cWhite) )
     grpMsgS:insert(lblAccess)
     
     transition.to( grpMsgS, { alpha = 1, time = 400 } )
@@ -425,7 +435,7 @@ function showMsgE(message)
         text = message, 
         x = midW, y = midH - 20, width = 380, 
         fontSize = 27, align = "center",
-        font = native.systemFontBold
+        font = fontSemiBold
     })
     lblMsg:setFillColor( 1 )
     grpMsgM:insert(lblMsg)
@@ -450,7 +460,7 @@ function showMsgE(message)
         text = "Reintentar", 
         x = midW, y = midH + 60, width = 380, 
         fontSize = 27, align = "center",
-        font = native.systemFontBold
+        font = fontSemiBold
     })
     lblMsgR:setFillColor( 1 )
     grpMsgM:insert(lblMsgR)
@@ -466,15 +476,14 @@ function scene:create( event )
         xtraW = (intW - 1050) / 5
     end
     
-    local imgBg = display.newImage( "img/bg.png" )
-    imgBg.x = midW
-    imgBg.y = midH
-    screen:insert(imgBg)
-    
-    local imgClouds = display.newImage( "img/clouds.png" )
-    imgClouds.anchorX = 0
-    imgClouds.anchorY = 0
-    screen:insert(imgClouds)
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } ) 
+    screen:insert(bg)
     
     local iconExit = display.newImage( "img/iconExit.png" )
     iconExit.x = 30
@@ -495,48 +504,61 @@ function scene:create( event )
     grpHome.alpha = 0
     screen:insert(grpHome)
     
-    local imgHomeText = display.newImage( "img/homeText.png" )
-    imgHomeText.x = (midW - xtraW) - 240 
-    imgHomeText.y = midH - 100
-    grpHome:insert(imgHomeText)
+    local logoTuki = display.newImage( "img/logoTuki.png" )
+    logoTuki.x = (midW - xtraW) - 240 
+    logoTuki.y = midH - 50
+    grpHome:insert(logoTuki)
     
-    local imgToCheckIn = display.newImage( "img/toCheckIn.png" )
-    imgToCheckIn.x = (midW + xtraW) + 260 
-    imgToCheckIn.y = midH - 100
-    imgToCheckIn:addEventListener( 'tap', toCamera) 
-    grpHome:insert(imgToCheckIn)
+    local phone = display.newImage( "img/phone.png" )
+    phone.x = (midW - xtraW) - 240 
+    phone.y = midH + 120
+    grpHome:insert(phone)
     
     local lbl1 = display.newText({
-        text = "REGISTRA", 
-        x = (midW + xtraW) + 320, y = midH - 130,
-        width = 300,
-        font = native.systemFontBold,   
-        fontSize = 50, align = "left"
+        text = "GANA RECOMPENSAS", 
+        x = (midW + xtraW) + 280, y = midH - 250,
+        width = 400,
+        font = fontBold,   
+        fontSize = 35, align = "center"
     })
     lbl1:setFillColor( 1 )
     grpHome:insert(lbl1)
     
     local lbl2 = display.newText({
-        text = "TU  VISITA", 
-        x = (midW + xtraW) + 320, y = midH - 70,
-        width = 300,
-        font = native.systemFont,   
-        fontSize = 50, align = "left"
+        text = "EN TUS COMPRAS...", 
+        x = (midW + xtraW) + 280, y = midH - 200,
+        width = 400,
+        font = fontRegular,   
+        fontSize = 35, align = "center"
     })
     lbl2:setFillColor( 1 )
     grpHome:insert(lbl2)
     
+    local stores = display.newImage( "img/stores.png" )
+    stores.x = (midW + xtraW) + 280 
+    stores.y = midH - 110
+    grpHome:insert(stores)
+    
+    local imgToCheckIn = display.newImage( "img/toCheckIn.png" )
+    imgToCheckIn.x = (midW + xtraW) + 280 
+    imgToCheckIn.y = midH + 30
+    imgToCheckIn:addEventListener( 'tap', toCamera) 
+    grpHome:insert(imgToCheckIn)
+    
     -- Bottom Section
-    local bgBottom = display.newRoundedRect( midW, intH -110, intW - 20, 200, 10 )
-    bgBottom:setFillColor( 0, 91/255, 127/255 )
-    grpHome:insert( bgBottom )
+    local bgBottom1 = display.newRect( midW, intH -140, intW, 204 )
+    bgBottom1:setFillColor( unpack(cTurquesa) )
+    grpHome:insert( bgBottom1 )
+    local bgBottom2 = display.newRect( midW, intH -140, intW, 200 )
+    bgBottom2:setFillColor( unpack(cPurPle) )
+    grpHome:insert( bgBottom2 )
     
     local bgPointsHome = display.newImage( "img/bgPointsHome.png" )
     bgPointsHome.x = 110
-    bgPointsHome.y = intH - 110
+    bgPointsHome.y = intH - 140
     grpHome:insert(bgPointsHome)
     
-    local bgImg = display.newRoundedRect( intW - 140, intH - 110, 240, 180, 10 )
+    local bgImg = display.newRoundedRect( intW - 160, intH - 140, 282, 214, 10 )
     bgImg:setFillColor( 11/225, 163/225, 212/225 )
     grpHome:insert(bgImg)
     
@@ -545,19 +567,29 @@ function scene:create( event )
     
     lblHPoints = display.newText({
         text = "", 
-        x = 110, y = intH - 125,
+        x = 110, y = intH - 165,
         width = 150,
-        font = native.systemFontBold,   
+        font = fontSemiBold,   
         fontSize = 70, align = "center"
     })
-    lblHPoints:setFillColor( unpack(cMarine) )
+    lblHPoints:setFillColor( unpack(cWhite) )
     grpBottom:insert(lblHPoints)
+    
+    lblHPoints2 = display.newText({
+        text = "PUNTOS", 
+        x = 110, y = intH - 110,
+        width = 150,
+        font = fontSemiBold,   
+        fontSize = 30, align = "center"
+    })
+    lblHPoints2:setFillColor( unpack(cWhite) )
+    grpBottom:insert(lblHPoints2)
     
     lblHDesc = display.newText({
         text = "", 
-        x = midW - 30, y = intH - 110, width = intW - 500,
-        font = native.systemFontBold,   
-        fontSize = 55, align = "left"
+        x = midW - 35, y = intH - 140, width = intW - 530,
+        font = fontSemiBold,   
+        fontSize = 50, align = "left"
     })
     lblHDesc:setFillColor( 1 )
     grpBottom:insert(lblHDesc)

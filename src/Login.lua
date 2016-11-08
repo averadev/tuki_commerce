@@ -26,7 +26,6 @@ end
 ------------------------------------
 function onTxtFocus(event)
     if ( "began" == event.phase ) then
-        transition.to( loginText, { y = 65 + h, width = 224, height = 75, time = 400, transition = easing.outExpo } )
         transition.to( grpLogin, { y = (-midH + 170) + h, time = 400, transition = easing.outExpo } )
     elseif ( "submitted" == event.phase ) then
         verifyKey()
@@ -40,7 +39,6 @@ function backTxtPositions()
     -- Hide Keyboard
     native.setKeyboardFocus(nil)
     -- Interfaz Sign In
-    transition.to( loginText, { y = midH - 200, width = 448, height = 151, time = 400, transition = easing.outExpo } )
     transition.to( grpLogin, { y = 0, time = 400, transition = easing.outExpo } )
 end
 
@@ -121,20 +119,20 @@ function showMsg(message)
     grpMsg:insert(bg)
 
     local bg = display.newRoundedRect( midW, midH, 404, 154, 15 )
-    bg:setFillColor( 1 )
+    bg:setFillColor( unpack(cTurquesa) )
     grpMsg:insert(bg)
 
     local bg = display.newRoundedRect( midW, midH, 400, 150, 15 )
-    bg:setFillColor( unpack(cMarine) )
+    bg:setFillColor( unpack(cWhite) )
     grpMsg:insert(bg)
 
     local lblMsg = display.newText({
         text = message, 
         x = midW, y = midH, width = 380, 
         fontSize = 27, align = "center",
-        font = native.systemFontBold
+        font = fontSemiBold
     })
-    lblMsg:setFillColor( 1 )
+    lblMsg:setFillColor( unpack(cPurPle) )
     grpMsg:insert(lblMsg)
     
     transition.to( grpMsg, { alpha = 1, time = 400 } )
@@ -145,66 +143,73 @@ end
 -- Called immediately on call
 function scene:create( event )
     screen = self.view
-    
-    local imgBg = display.newImage( "img/bg.png" )
-    imgBg.x = midW
-    imgBg.y = midH
-    screen:insert(imgBg)
-    
-    local imgClouds = display.newImage( "img/clouds.png" )
-    imgClouds.anchorX = 0
-    imgClouds.anchorY = 0
-    screen:insert(imgClouds)
-    
-    local imgCorners = display.newImage( "img/corner.png" )
-    imgCorners.anchorX = 1
-    imgCorners.anchorY = 1
-    imgCorners.x = intW
-    imgCorners.y = intH
-    screen:insert(imgCorners)
-    
-    loginText = display.newImage( "img/loginText.png" )
-    loginText.x = midW
-    loginText.y = midH - 200
-    screen:insert(loginText)
+     
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } ) 
+    screen:insert(bg)
     
     -- Login Elements
     grpLogin = display.newGroup()
     screen:insert(grpLogin)
     
+    -- Line
+    local line = display.newLine( midW - 480, midH - 220, midW + 480, midH - 220,
+        midW + 480, midH + 150, midW - 480, midH + 150, midW - 480, midH - 220)
+    line.strokeWidth = 3
+    line:setStrokeColor( unpack(cTurquesa) )
+    grpLogin:insert( line )
+     
+    local logoWhite = display.newImage( "img/logoWhite.png" )
+    logoWhite:translate( midW - 250, midH - 20 )
+    grpLogin:insert(logoWhite)
+    
     -- Bg TextFields
-    local bgSignPass = display.newImage("img/contrasenia.png", true) 
-    bgSignPass.x = midW
-    bgSignPass.y = midH
+    local bgField = display.newRoundedRect( midW + 220, midH - 80, 470, 70, 5 )
+    bgField:setFillColor( unpack(cWhite) )
+    grpLogin:insert( bgField )
+    local bgSignPass = display.newImage("img/iconCandado.png", true) 
+    bgSignPass.x = midW  + 20
+    bgSignPass.y = midH - 80
     grpLogin:insert(bgSignPass)
     
     -- TextFields Sign In
-    txtSignPass = native.newTextField( midW + 25, midH, 400, 55 )
+    txtSignPass = native.newTextField( midW + 245, midH - 80, 400, 45 )
     txtSignPass.size = 25
     txtSignPass.isSecure = true
     txtSignPass.hasBackground = false
-    txtSignPass.placeholder = "Clave de acceso"
+    txtSignPass.placeholder = "CLAVE DE ACCESO"
     txtSignPass:addEventListener( "userInput", onTxtFocus )
 	grpLogin:insert(txtSignPass)
     
     -- Boton Canjear
-    local btnAccess = display.newRoundedRect( midW + 140, midH + 100, 220, 70, 5 )
-    btnAccess:setFillColor( 1 )
+    local btnAccess = display.newRoundedRect( midW + 220, midH + 30, 470, 70, 5 )
+    btnAccess:setFillColor( unpack(cTurquesa) )
     grpLogin:insert( btnAccess )
     btnAccess:addEventListener( 'tap', verifyKey)
 
-    local btnAcess2 = display.newRoundedRect( midW + 140, midH + 100, 216, 66, 5 )
-    btnAcess2:setFillColor( unpack(cMarine) )
-    grpLogin:insert( btnAcess2 )
-
     local lblAccess = display.newText({
-        text = "Acceder", 
-        x = midW + 140, y = midH + 100, 
-        fontSize = 27,
-        font = native.systemFontBold,   
+        text = "ENTRAR", 
+        x = midW + 220, y = midH + 30, 
+        fontSize = 30, width = 300,
+        font = fontSemiBold, align = 'center'
 
     })
-    lblAccess:setFillColor( 1 )
+    lblAccess:setFillColor( unpack(cWhite) )
+    grpLogin:insert(lblAccess)
+    
+    local lblAccess = display.newText({
+        text = "www.tukicard.com", 
+        x = midW, y = midH + 180, 
+        fontSize = 25, width = 300,
+        font = fontSemiBold, align = 'center'
+
+    })
+    lblAccess:setFillColor( unpack(cWhite) )
     grpLogin:insert(lblAccess)
     
     

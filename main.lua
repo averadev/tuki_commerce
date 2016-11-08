@@ -31,4 +31,5 @@ if dbConfig.idBranch == 0 then
     composer.gotoScene("src.Login")
 else
     composer.gotoScene("src.Home")
+    --composer.gotoScene("src.NewUser", { params = { user = '1' } })
 end

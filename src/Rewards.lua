@@ -136,7 +136,7 @@ function showReward(item)
             text = "", 
             x = (midW - xtraW) - 300, y = 350, 
             fontSize = 18, width = 220,
-            font = native.systemFontBold,   
+            font = fontSemiBold,   
 
         })
         lblRedemTitle:setFillColor( 1 )
@@ -152,7 +152,7 @@ function showReward(item)
             text = "", 
             x = (midW - xtraW) - 450, y = 350, 
             fontSize = 30,
-            font = native.systemFontBold,   
+            font = fontSemiBold,   
 
         })
         lblRedemPoints:setFillColor( 1 )
@@ -176,7 +176,7 @@ function showReward(item)
             text = "CANJEAR", 
             x = (midW - xtraW) - 305, y = 435, 
             fontSize = 30,
-            font = native.systemFontBold,   
+            font = fontSemiBold,   
 
         })
         lblCanjear:setFillColor( 1 )
@@ -217,32 +217,69 @@ function showPoints(points)
     grpMsg.alpha = 0
     screen:insert(grpMsg)
     
-    local bgShadow = display.newRect( 0, 0, intW, intH )
-    bgShadow.alpha = .5
-    bgShadow.anchorX = 0
-    bgShadow.anchorY = 0
-    bgShadow:setFillColor( 0 )
-    grpMsg:insert(bgShadow)
+    -- Line
+    local line = display.newLine( midW - 350, midH - 250, midW + 350, midH - 250,
+        midW + 350, midH + 150, midW - 350, midH + 150, midW - 350, midH - 250)
+    line.strokeWidth = 3
+    line:setStrokeColor( unpack(cTurquesa) )
+    grpMsg:insert( line )
     
-    local imgBg = display.newImage( "img/bgCheckInPoints.png" )
-    imgBg.x = midW
-    imgBg.y = midH
-    grpMsg:insert(imgBg)
-    
-    local lblMsg = display.newText({
-        text = points, 
-        x = midW + 210, y = midH + 90,
-        fontSize = 140,
-        font = native.systemFontBold,   
+    local lblTitle1 = display.newText({
+        text = "¡GRACIAS", 
+        x = midW - 20, y = midH - 170,
+        fontSize = 80, width = 600,
+        font = fontSemiBold, align = 'left' 
         
     })
-    lblMsg:setFillColor( 1 )
-    grpMsg:insert(lblMsg)
+    lblTitle1:setFillColor( unpack(cWhite) )
+    grpMsg:insert(lblTitle1)
+    local lblTitle2 = display.newText({
+        text = "POR REGISTRAR TU VISITA!", 
+        x = midW - 20, y = midH - 100,
+        fontSize = 40, width = 600,
+        font = fontSemiBold, align = 'left' 
+        
+    })
+    lblTitle2:setFillColor( unpack(cWhite) )
+    grpMsg:insert(lblTitle2)
+    local lblTitle3 = display.newText({
+        text = "GANASTE:", 
+        x = midW - 20, y = midH + 20,
+        fontSize = 100, width = 600,
+        font = fontBold, align = 'left' 
+        
+    })
+    lblTitle3:setFillColor( unpack(cWhite) )
+    grpMsg:insert(lblTitle3)
+    
+    local imgBg = display.newImage( "img/circlePoints.png" )
+    imgBg:translate(midW + 340, midH + 140) 
+    imgBg:scale( 1.5, 1.5 )
+    grpMsg:insert(imgBg)
+    
+    local lblTuks1 = display.newText({
+        text = points, 
+        x = midW + 340, y = midH + 100,
+        fontSize = 100, width = 200,
+        font = fontSemiBold, align = 'center'  
+        
+    })
+    lblTuks1:setFillColor( 1 )
+    grpMsg:insert(lblTuks1)
+    local lblTuks2 = display.newText({
+        text = 'PUNTOS', 
+        x = midW + 340, y = midH + 180,
+        fontSize = 40, width = 200,
+        font = fontSemiBold, align = 'center'  
+        
+    })
+    lblTuks2:setFillColor( 1 )
+    grpMsg:insert(lblTuks2)
     
     transition.to( grpMsg, { alpha = 1, time = 1000 })
     audio.play( fxCash )
-    transition.to( grpMsg, { alpha = 0, time = 500, delay = 2500 })
-    transition.to( grpContent, { alpha = 1, time = 500, delay = 2500 })
+    transition.to( grpMsg, { alpha = 0, time = 500, delay = 3500 })
+    transition.to( grpContent, { alpha = 1, time = 500, delay = 3500 })
 end
 
 -------------------------------------
@@ -250,73 +287,60 @@ end
 ------------------------------------
 function showList()
     
-    local xtraW = 0
-    if intW > 1050 then
-        xtraW = (intW - 1050) / 5
-    end
-    
     grpContent = display.newGroup()
     grpContent.alpha = 0
     screen:insert(grpContent)
     
-    local btnBack = display.newImage( "img/btnBack.png" )
-    btnBack.x = 170
-    btnBack.y = 80
+    local btnBack = display.newImage( "img/iconPrev.png" )
+    btnBack.x = midW - 450
+    btnBack.y = 160
     btnBack:addEventListener( 'tap', tapReturn)
     grpContent:insert(btnBack)
     
-    bgLogo1 = display.newRoundedRect( (midW - xtraW) - 335, 350, 220, 220, 15 )
-    bgLogo1:setFillColor( unpack(cAqua) )
-    grpContent:insert( bgLogo1 )
+    -- Line
+    local line = display.newLine( midW - 300, 80, midW + 400, 80,
+        midW + 400, 240, midW - 300, 240, midW - 300, 80)
+    line.strokeWidth = 3
+    line:setStrokeColor( unpack(cWhite) )
+    grpContent:insert( line )
     
-    bgLogo2 = display.newRoundedRect( (midW - xtraW) - 335, 350, 200, 200, 15 )
-    bgLogo2:setFillColor( 1 )
-    grpContent:insert( bgLogo2 )
-    
-    if logoCom == '' then
-        imgLogo = display.newImage( "img/bgTmpLogo.png" )
-    else
-        imgLogo = display.newImage( logoCom, system.TemporaryDirectory )
-    end
-    imgLogo.x =  (midW - xtraW) - 335
-    imgLogo.y = 350
+    local mask = graphics.newMask( "img/maskLogo.png" )
+    local imgLogo = display.newImage( logoCom, system.TemporaryDirectory )
+    imgLogo:setMask( mask )
+    imgLogo:translate( midW - 300, 160 )
+    imgLogo.width = 180
+    imgLogo.height = 180
     grpContent:insert(imgLogo)
-    
-    local bgPointsList = display.newImage( "img/bgPointsList.png" )
-    bgPointsList.x =  (midW - xtraW) - 335
-    bgPointsList.y = 600
-    grpContent:insert(bgPointsList)
     
     local lblPoints = display.newText({
         text = userPoints, 
-        x =  (midW - xtraW) - 335, y = 580,
-        fontSize = 80,
-        font = native.systemFontBold,   
-        
+        x = midW + 100, y = 120,
+        fontSize = 80, width = 500,
+        font = fontBold, align = 'right'
     })
-    lblPoints:setFillColor( unpack(cMarine) )
+    lblPoints:setFillColor( unpack(cWhite) )
     grpContent:insert(lblPoints)
     
     local lblTitle = display.newText({
-        text = "RECOMPENSAS DISPONIBLES:", 
-        x = (midW + xtraW) + 150, y = 60,
-        fontSize = 30, width = 600,
-        font = native.systemFontBold,   
+        text = "PUNTOS DISPONIBLES", 
+        x = midW + 100, y = 180,
+        fontSize = 40, width = 500,
+        font = fontSemiBold, align = 'right'
         
     })
     lblTitle.anchorY = 0
-    lblTitle:setFillColor( 1 )
+    lblTitle:setFillColor( unpack(cWhite) )
     grpContent:insert(lblTitle)
     
     scrRewards = widget.newScrollView
 	{
-        top = 100,
-		width = 600,
-		height = 620,
+        top = 280,
+		width = 700,
+		height = intH - 320,
 		horizontalScrollDisabled = true,
         hideBackground = true
 	}
-    scrRewards.x = (midW + xtraW) + 150
+    scrRewards.x = midW + 50
 	grpContent:insert(scrRewards)
     RestManager.getRewards()
 end
@@ -359,7 +383,7 @@ function showRewards(items)
             text = items[z].name, 
             x = 225, y = curY - 25,
             fontSize = 24, width = 400, align = "left",
-            font = native.systemFontBold,   
+            font = fontSemiBold,   
 
         })
         rewards[z].lblTitle:setFillColor( unpack(cMarine) )
@@ -369,7 +393,7 @@ function showRewards(items)
             text = items[z].description, 
             x = 225, y = curY + 15, height = 42,
             fontSize = 18, width = 400, align = "left",
-            font = native.systemFont,   
+            font = fontRegular,   
 
         })
         rewards[z].lblDesc:setFillColor( unpack(cGrayLow) )
@@ -378,7 +402,7 @@ function showRewards(items)
         local lblPoints = display.newText({
             text = items[z].points, 
             x = 530, y = curY - 10, fontSize = 50,
-            font = native.systemFontBold 
+            font = fontSemiBold 
 
         })
         lblPoints:setFillColor( 1 )
@@ -387,7 +411,7 @@ function showRewards(items)
         local lblPointsB = display.newText({
             text = "PUNTOS", 
             x = 530, y = curY + 25, fontSize = 20,
-            font = native.systemFontBold 
+            font = fontSemiBold 
 
         })
         lblPointsB:setFillColor( 1 )
@@ -415,22 +439,14 @@ end
 function scene:create( event )
     screen = self.view
     
-    local imgBg = display.newImage( "img/bg.png" )
-    imgBg.x = midW
-    imgBg.y = midH
-    screen:insert(imgBg)
-    
-    local imgClouds = display.newImage( "img/clouds.png" )
-    imgClouds.anchorX = 0
-    imgClouds.anchorY = 0
-    screen:insert(imgClouds)
-    
-    local imgCorners = display.newImage( "img/corner.png" )
-    imgCorners.anchorX = 1
-    imgCorners.anchorY = 1
-    imgCorners.x = intW
-    imgCorners.y = intH
-    screen:insert(imgCorners)
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } ) 
+    screen:insert(bg)
     
     userId = event.params.user.id
     userPoints = event.params.user.points
@@ -442,7 +458,7 @@ function scene:create( event )
     end
     -- Timer
     timeCount = 0
-    timerRew = timer.performWithDelay( 25000, cancelTime, 1 )
+    --timerRew = timer.performWithDelay( 25000, cancelTime, 1 )
 end	
 
 -- Called immediately after scene has moved onscreen:

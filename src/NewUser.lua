@@ -51,98 +51,104 @@ function scene:create( event )
     screen = self.view
     itemNU = event.params.user
     
-    local imgBg = display.newImage( "img/bg.png" )
-    imgBg.x = midW
-    imgBg.y = midH
-    screen:insert(imgBg)
-    
-    local imgClouds = display.newImage( "img/clouds.png" )
-    imgClouds.anchorX = 0
-    imgClouds.anchorY = 0
-    screen:insert(imgClouds)
-    
-    local imgCorners = display.newImage( "img/corner.png" )
-    imgCorners.anchorX = 1
-    imgCorners.anchorY = 1
-    imgCorners.x = intW
-    imgCorners.y = intH
-    screen:insert(imgCorners)
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } ) 
+    screen:insert(bg)
     
     grpNewUser = display.newGroup()
     screen:insert(grpNewUser)
     
     lblTitleNU = display.newText({
-        text = "¡Hola, bienvenido a TUKI!", 
-        x = midW, y = midH - 220,
-        fontSize = 40,
-        font = native.systemFontBold,   
+        text = "¡HOLA!, BIENVENIDO A:", 
+        x = midW, y = midH - 270,
+        fontSize = 50,
+        font = fontSemiBold,   
         
     })
     lblTitleNU.anchorY = 0
     lblTitleNU:setFillColor( 1 )
     grpNewUser:insert(lblTitleNU)
     
+    -- Line
+    local line = display.newLine( midW - 480, midH - 180, midW + 480, midH - 180,
+        midW + 480, midH + 180, midW - 480, midH + 180, midW - 480, midH - 180)
+    line.strokeWidth = 3
+    line:setStrokeColor( unpack(cTurquesa) )
+    grpNewUser:insert( line )
+     
+    local logoWhite = display.newImage( "img/logoWhite.png" )
+    logoWhite:translate( midW - 250, midH - 10 )
+    grpNewUser:insert(logoWhite)
+    
     -- Icons
-    local iconUser = display.newImage( "img/usuario.png" )
-    iconUser:translate( midW, midH - 100 )
+    local btnUser1 = display.newRoundedRect( midW + 220, midH - 60, 440, 70, 5 )
+    btnUser1:setFillColor( unpack(cTurquesa) )
+    grpNewUser:insert( btnUser1 )
+    local btnUser2 = display.newRoundedRect( midW + 220, midH - 60, 436, 66, 5 )
+    btnUser2:setFillColor( unpack(cWhite) )
+    grpNewUser:insert( btnUser2 )
+    local iconUser = display.newImage( "img/icoUser.png" )
+    iconUser:translate( midW + 40, midH - 60 )
     grpNewUser:insert(iconUser)
     
-    local iconEmail = display.newImage( "img/email.png" )
-    iconEmail:translate( midW, midH + 20 )
+    local btnEmail1 = display.newRoundedRect( midW + 220, midH + 40, 440, 70, 5 )
+    btnEmail1:setFillColor( unpack(cTurquesa) )
+    grpNewUser:insert( btnEmail1 )
+    local btnEmail2 = display.newRoundedRect( midW + 220, midH + 40, 436, 66, 5 )
+    btnEmail2:setFillColor( unpack(cWhite) )
+    grpNewUser:insert( btnEmail2 )
+    local iconEmail = display.newImage( "img/icoEmail.png" )
+    iconEmail:translate( midW + 40, midH + 40 )
     grpNewUser:insert(iconEmail)
     
     -- TextFields Create
-    txtName = native.newTextField( midW + 30, midH - 100, 420, 55 )
-    txtName.size = 30
+    txtName = native.newTextField( midW + 240, midH - 55, 350, 55 )
+    txtName.size = 26
     txtName.hasBackground = false
-    txtName.placeholder = "Nombre"
+    txtName.placeholder = "TU NOMBRE"
     txtName:addEventListener( "userInput", onTxtFocus )
 	grpNewUser:insert(txtName)
     
-    txtEmail = native.newTextField( midW + 30, midH + 20, 420, 55 )
-    txtEmail.size = 30
+    txtEmail = native.newTextField( midW + 240, midH + 45, 350, 55 )
+    txtEmail.size = 26
     txtEmail.inputType = "email"
     txtEmail.hasBackground = false
-    txtEmail.placeholder = "E-mail"
+    txtEmail.placeholder = "TU CORREO ELECTRONICO"
     txtEmail:addEventListener( "userInput", onTxtFocus )
 	grpNewUser:insert(txtEmail)
     
     -- Botones
-    local btnOmitirB = display.newRoundedRect( midW - 150, midH + 130, 250, 70, 10 )
-    btnOmitirB:setFillColor( 1 )
-    grpNewUser:insert( btnOmitirB )
-    
-    local btnOmitir = display.newRoundedRect( midW - 150, midH + 130, 246, 66, 10 )
-    btnOmitir:setFillColor( unpack(cMarine) )
+    local btnOmitir = display.newRoundedRect( midW - 200, midH + 180, 300, 66, 10 )
+    btnOmitir:setFillColor( unpack(cTurquesa) )
     btnOmitir:addEventListener( 'tap', toRewards) 
-    btnOmitir.alpha = .8
     grpNewUser:insert( btnOmitir )
     
     local lblOmitir = display.newText({
-        text = "Proporcionar en otro momento", 
-        x = midW - 150, y = midH + 130,
-        fontSize = 23, width = 220, align = "center",
-        font = native.systemFontBold,
+        text = "PROPORCIONAR EN OTRO MOMENTO", 
+        x = midW - 200, y = midH + 180,
+        fontSize = 20, width = 220, align = "center",
+        font = fontSemiBold,
     })
-    lblOmitir:setFillColor( 1 )
+    lblOmitir:setFillColor( unpack(cWhite) )
     grpNewUser:insert(lblOmitir)
     
-    local btnGuardarB = display.newRoundedRect( midW + 150, midH + 130, 250, 70, 10 )
-    btnGuardarB:setFillColor( 1 )
-    grpNewUser:insert( btnGuardarB )
-    
-    local btnGuardar = display.newRoundedRect( midW + 150, midH + 130, 246, 66, 10 )
-    btnGuardar:setFillColor( unpack(cMarine) )
+    local btnGuardar = display.newRoundedRect( midW + 200, midH + 180, 300, 66, 10 )
+    btnGuardar:setFillColor( unpack(cTurquesa) )
     btnGuardar:addEventListener( 'tap', updateUser) 
     grpNewUser:insert( btnGuardar )
     
     local lblGuardar = display.newText({
-        text = "Guardar", 
-        x = midW + 150, y = midH + 130,
-        fontSize = 30, width = 220, align = "center",
-        font = native.systemFontBold,
+        text = "ENTRAR", 
+        x = midW + 200, y = midH + 180,
+        fontSize = 25, width = 220, align = "center",
+        font = fontSemiBold,
     })
-    lblGuardar:setFillColor( 1 )
+    lblGuardar:setFillColor( unpack(cWhite) )
     grpNewUser:insert(lblGuardar)
     
 end	
