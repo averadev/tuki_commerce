@@ -7,9 +7,9 @@ local fxMetronome = audio.loadSound( "fx/metronome.wav")
 require('src.Globals')
 
 -- Grupos y Contenedores
-local screen, scrRewards, grpMsg, grpContent, grpRedem
+local screen, scrRewards, grpMsg, grpContent, grpRedem, grpTitle
 local scene = composer.newScene()
-local userPoints, userId, timerRew, timeCount
+local userPoints, userId, timerRew, timeCount, lblPoints, lblTitle, grpBtnRedem
 local bgLogo1, bgLogo2, imgLogo, btnRedem, lblRedemTitle, lblRedemPoints, imgReward
 local rewards = {}
 
@@ -93,7 +93,6 @@ function tapReward(event)
                 
                 rewards[z].selected = false
                 rewards[z].bgDesc:setFillColor( 1 )
-                rewards[z].bgDescR:setFillColor( 1 )
                 rewards[z].lblTitle:setFillColor( unpack(cMarine) )
                 rewards[z].lblDesc:setFillColor( unpack(cGrayLow) )
             end
@@ -101,12 +100,11 @@ function tapReward(event)
         -- Select reward
         audio.play( fxTap )
         rewards[idx].selected = true
-        rewards[idx].bgDesc:setFillColor( unpack(cMarine) )
-        rewards[idx].bgDescR:setFillColor( unpack(cMarine) )
+        rewards[idx].bgDesc:setFillColor( unpack(cPurPle) )
         rewards[idx].lblTitle:setFillColor( 1 )
         rewards[idx].lblDesc:setFillColor( 1 )
         -- Show Reward
-        showReward(rewards[idx].reward)
+        showReward(rewards[idx].reward, event.target.y)
     end
     return true
 end
@@ -115,7 +113,7 @@ end
 -- Mostrar recompensa
 -- @param event objeto evento
 ------------------------------------
-function showReward(item)
+function showReward(item, posY)
     local xtraW = 0
     if intW > 1050 then
         xtraW = (intW - 1050) / 5
@@ -127,68 +125,63 @@ function showReward(item)
         grpContent:insert( grpRedem )
         
         -- Detalle canje
-        local bgDetail = display.newRect( (midW - xtraW) - 335, 350, 300, 64 )
-        bgDetail.alpha = .5
-        bgDetail:setFillColor( 0 )
-        grpRedem:insert( bgDetail )
+        local bgImage = display.newRoundedRect( midW + 292, 160, 218, 163, 5 )
+        bgImage:setFillColor( 1 )
+        grpRedem:insert( bgImage )
         
         lblRedemTitle = display.newText({
             text = "", 
-            x = (midW - xtraW) - 300, y = 350, 
-            fontSize = 18, width = 220,
-            font = fontSemiBold,   
-
+            x = midW, y = 160, 
+            fontSize = 30, width = 360,
+            font = fontSemiBold, align = 'left' 
         })
+        lblRedemTitle.anchorY = 1
         lblRedemTitle:setFillColor( 1 )
         grpRedem:insert(lblRedemTitle)
         
-        
-        local bgPoints = display.newRect( (midW - xtraW) - 450, 350, 70, 64 )
-        bgPoints.alpha = .5
-        bgPoints:setFillColor( unpack(cMarine) )
-        grpRedem:insert( bgPoints )
-        
         lblRedemPoints = display.newText({
             text = "", 
-            x = (midW - xtraW) - 450, y = 350, 
-            fontSize = 30,
-            font = fontSemiBold,   
-
+            x = midW, y = 180, 
+            fontSize = 30, width = 360,
+            font = fontBold, align = 'left' 
         })
         lblRedemPoints:setFillColor( 1 )
         grpRedem:insert(lblRedemPoints)
         
         -- Boton Canjear
-        btnRedem = display.newRoundedRect( (midW - xtraW) - 335, 435, 320, 70, 5 )
-        btnRedem:setFillColor( 1 )
-        grpRedem:insert( btnRedem )
+        grpBtnRedem = display.newGroup()
+        scrRewards:insert( grpBtnRedem )
+        btnRedem = display.newRoundedRect( 690, 0, 120, 120, 5 )
+        btnRedem:setFillColor( unpack(cAqua) )
+        grpBtnRedem:insert(btnRedem)
         btnRedem:addEventListener( 'tap', tapRedimir)
-        
-        local btnRedem2 = display.newRoundedRect( (midW - xtraW) - 335, 435, 316, 66, 5 )
-        btnRedem2:setFillColor( unpack(cMarine) )
-        grpRedem:insert( btnRedem2 )
-        
-        local icoRedem = display.newImage( "img/icoRedem.png" )
-        icoRedem:translate((midW - xtraW) - 415, 435)
-        grpRedem:insert(icoRedem)
-        
+        local bgRedem = display.newRoundedRect( 690, 0, 114, 114, 5 )
+        bgRedem:setFillColor( {
+            type = 'gradient',
+            color1 = { unpack(cTurquesa) }, 
+            color2 = { unpack(cPurPle) },
+            direction = "bottom"
+        } )
+        grpBtnRedem:insert(bgRedem)
         local lblCanjear = display.newText({
             text = "CANJEAR", 
-            x = (midW - xtraW) - 305, y = 435, 
-            fontSize = 30,
+            x = 690, y = 0, 
+            fontSize = 20,
             font = fontSemiBold,   
 
         })
         lblCanjear:setFillColor( 1 )
-        grpRedem:insert(lblCanjear)
+        grpBtnRedem:insert(lblCanjear)
         
         -- Animaciones
-        transition.to( imgLogo, { time = 500, alpha = 0 })
+        transition.to( grpTitle, { time = 500, alpha = 0 })
         transition.to( grpRedem, { time = 500, delay = 500, alpha = 1 })
         transition.to( bgLogo1, { time = 500, width = 320, y = 270, height = 245 })
         transition.to( bgLogo2, { time = 500, width = 300, y = 270, height = 225 })
         
     end
+    
+    grpBtnRedem.y = posY
     
     if imgReward then
         imgReward:removeSelf()
@@ -196,16 +189,15 @@ function showReward(item)
     end
     imgReward = display.newImage( item.image, system.TemporaryDirectory )
     imgReward.alpha = 0
-    imgReward.height = 225
-    imgReward.width = 300
-    imgReward:translate((midW - xtraW) - 335, 270)
+    imgReward.height = 157
+    imgReward.width = 210
+    imgReward:translate(midW + 292, 160)
     grpRedem:insert(imgReward)
-    imgReward:toBack()
     transition.to( imgReward, { time = 1000, alpha = 1 })
     
     btnRedem.reward = item
     lblRedemTitle.text = item.name
-    lblRedemPoints.text = item.points
+    lblRedemPoints.text = item.points.." PUNTOS"
 end
 
 -------------------------------------
@@ -304,6 +296,10 @@ function showList()
     line:setStrokeColor( unpack(cWhite) )
     grpContent:insert( line )
     
+    local bgLogo = display.newImage( "img/bgLogo.png" )
+    bgLogo:translate( midW - 300, 160 )
+    grpContent:insert(bgLogo)
+    
     local mask = graphics.newMask( "img/maskLogo.png" )
     local imgLogo = display.newImage( logoCom, system.TemporaryDirectory )
     imgLogo:setMask( mask )
@@ -312,6 +308,10 @@ function showList()
     imgLogo.height = 180
     grpContent:insert(imgLogo)
     
+    
+    grpTitle = display.newGroup()
+    grpContent:insert( grpTitle )
+    
     local lblPoints = display.newText({
         text = userPoints, 
         x = midW + 100, y = 120,
@@ -319,7 +319,7 @@ function showList()
         font = fontBold, align = 'right'
     })
     lblPoints:setFillColor( unpack(cWhite) )
-    grpContent:insert(lblPoints)
+    grpTitle:insert(lblPoints)
     
     local lblTitle = display.newText({
         text = "PUNTOS DISPONIBLES", 
@@ -330,17 +330,17 @@ function showList()
     })
     lblTitle.anchorY = 0
     lblTitle:setFillColor( unpack(cWhite) )
-    grpContent:insert(lblTitle)
+    grpTitle:insert(lblTitle)
     
     scrRewards = widget.newScrollView
 	{
         top = 280,
-		width = 700,
+		width = 750,
 		height = intH - 320,
 		horizontalScrollDisabled = true,
         hideBackground = true
 	}
-    scrRewards.x = midW + 50
+    scrRewards.x = midW + 25
 	grpContent:insert(scrRewards)
     RestManager.getRewards()
 end
@@ -351,38 +351,37 @@ end
 ------------------------------------
 function showRewards(items)
     for z = 1, #items, 1 do 
-        local curY = (z*135) - 70
+        local curY = (z*140) - 70
         
         rewards[z] = {}
         rewards[z].reward = items[z]
-        local bgR = display.newRoundedRect( 300, curY, 600, 120, 10 )
+        local bgR = display.newRoundedRect( 375, curY, 750, 120, 5 )
         bgR:setFillColor( unpack(cAqua) )
         scrRewards:insert( bgR )
         
-        rewards[z].bgDesc = display.newRoundedRect( 10, curY, 400, 100, 10 )
-        rewards[z].bgDesc.anchorX = 0
+        rewards[z].bgDesc = display.newRoundedRect( 375, curY, 740, 110, 5 )
         rewards[z].bgDesc:setFillColor( 1 )
         scrRewards:insert( rewards[z].bgDesc )
         
-        rewards[z].bgDescR = display.newRect( 360, curY, 100, 100 )
-        rewards[z].bgDescR.anchorX = 0
-        rewards[z].bgDescR:setFillColor( 1 )
-        scrRewards:insert( rewards[z].bgDescR )
+        local bgPoints0 = display.newRoundedRect( 0, curY, 130, 120, 5 )
+        bgPoints0.anchorX = 0
+        bgPoints0:setFillColor( unpack(cAqua) )
+        scrRewards:insert( bgPoints0 )
         
-        local bgPoints = display.newRoundedRect( 470, curY, 120, 100, 10 )
+        local bgPoints = display.newRoundedRect( 3, curY, 124, 114, 5 )
         bgPoints.anchorX = 0
-        bgPoints:setFillColor( unpack(cMarine) )
+        bgPoints:setFillColor( {
+            type = 'gradient',
+            color1 = { unpack(cTurquesa) }, 
+            color2 = { unpack(cPurPle) },
+            direction = "bottom"
+        } )
         scrRewards:insert( bgPoints )
-        
-        local bgPointsL = display.newRect( 470, curY, 80, 100 )
-        bgPointsL.anchorX = 0
-        bgPointsL:setFillColor( unpack(cMarine) )
-        scrRewards:insert( bgPointsL )
         
         rewards[z].lblTitle = display.newText({
             text = items[z].name, 
-            x = 225, y = curY - 25,
-            fontSize = 24, width = 400, align = "left",
+            x = 390, y = curY - 25,
+            fontSize = 24, width = 480, align = "left",
             font = fontSemiBold,   
 
         })
@@ -391,9 +390,9 @@ function showRewards(items)
         
         rewards[z].lblDesc = display.newText({
             text = items[z].description, 
-            x = 225, y = curY + 15, height = 42,
-            fontSize = 18, width = 400, align = "left",
-            font = fontRegular,   
+            x = 390, y = curY + 15, height = 45,
+            fontSize = 20, width = 480, align = "left",
+            font = fontSemiRegular,   
 
         })
         rewards[z].lblDesc:setFillColor( unpack(cGrayLow) )
@@ -401,7 +400,7 @@ function showRewards(items)
         
         local lblPoints = display.newText({
             text = items[z].points, 
-            x = 530, y = curY - 10, fontSize = 50,
+            x = 65, y = curY - 25, fontSize = 60,
             font = fontSemiBold 
 
         })
@@ -410,7 +409,7 @@ function showRewards(items)
         
         local lblPointsB = display.newText({
             text = "PUNTOS", 
-            x = 530, y = curY + 25, fontSize = 20,
+            x = 65, y = curY + 25, fontSize = 24,
             font = fontSemiBold 
 
         })
@@ -423,7 +422,7 @@ function showRewards(items)
         end
         
         if tonumber(userPoints) < tonumber(items[z].points) then
-            local bgDisabled = display.newRoundedRect( 300, curY, 600, 120, 10 )
+            local bgDisabled = display.newRoundedRect( 375, curY, 750, 120, 5 )
             bgDisabled:setFillColor( 0 )
             bgDisabled.alpha = .4
             scrRewards:insert( bgDisabled )

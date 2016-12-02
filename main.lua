@@ -30,6 +30,10 @@ local dbConfig = DBManager.getSettings()
 if dbConfig.idBranch == 0 then
     composer.gotoScene("src.Login")
 else
-    composer.gotoScene("src.Home")
-    --composer.gotoScene("src.NewUser", { params = { user = '1' } })
+    composer.gotoScene("src.Cash")
+    local item = {}
+    item.id = 4000000000001641
+    item.points = 70
+    item.newPoints = 0
+    --composer.gotoScene("src.Rewards", { time = 0, params = {user = item} })
 end

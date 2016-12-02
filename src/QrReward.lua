@@ -80,29 +80,21 @@ function scene:create( event )
     userQrR = event.params.data.user
     rewardQrR = event.params.data.reward
     
-    local imgBg = display.newImage( "img/bg.png" )
-    imgBg.x = midW
-    imgBg.y = midH
-    screen:insert(imgBg)
-    
-    local imgClouds = display.newImage( "img/clouds.png" )
-    imgClouds.anchorX = 0
-    imgClouds.anchorY = 0
-    screen:insert(imgClouds)
-    
-    local imgCorners = display.newImage( "img/corner.png" )
-    imgCorners.anchorX = 1
-    imgCorners.anchorY = 1
-    imgCorners.x = intW
-    imgCorners.y = intH
-    screen:insert(imgCorners)
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } ) 
+    screen:insert(bg)
     
     grpQrR = display.newGroup()
     screen:insert(grpQrR)
     
-    local btnBack = display.newImage( "img/btnBack.png" )
-    btnBack.x = 170
-    btnBack.y = 80
+    local btnBack = display.newImage( "img/iconPrev.png" )
+    btnBack.x = midW - 450
+    btnBack.y = 110
     btnBack:addEventListener( 'tap', tapReturn)
     grpQrR:insert(btnBack)
     
@@ -121,7 +113,7 @@ function scene:create( event )
     bgRew:setFillColor( unpack(cMarine) )
     grpQrR:insert( bgRew )
     
-    local bgImg = display.newRoundedRect( midW - 200, midH + 50, 460, 350, 10 )
+    local bgImg = display.newRoundedRect( midW - 200, midH + 50, 450, 340, 10 )
     bgImg:setFillColor( unpack(cAqua) )
     grpQrR:insert( bgImg )
     
@@ -172,18 +164,28 @@ function scene:create( event )
     grpQrR:insert(lblDesc)
     
     local bgCancelW = display.newRoundedRect( midW + 140, midH + 175, 200, 100, 10 )
-    bgCancelW:setFillColor( 1 )
+    bgCancelW:setFillColor( unpack(cAqua) )
     grpQrR:insert( bgCancelW )
-    local bgCancel = display.newRoundedRect( midW + 140, midH + 175, 190, 90, 10 )
-    bgCancel:setFillColor( unpack(cAquaH) )
+    local bgCancel = display.newRoundedRect( midW + 140, midH + 175, 194, 94, 10 )
+    bgCancel:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } )
     bgCancel:addEventListener( 'tap', cancelRedem)
     grpQrR:insert( bgCancel )
     
     local bgRedemW = display.newRoundedRect( midW + 350, midH + 175, 200, 100, 10 )
-    bgRedemW:setFillColor( 1 )
+    bgRedemW:setFillColor( unpack(cAqua) )
     grpQrR:insert( bgRedemW )
-    local bgRedem = display.newRoundedRect( midW + 350, midH + 175, 190, 90, 10 )
-    bgRedem:setFillColor( unpack(cAqua) )
+    local bgRedem = display.newRoundedRect( midW + 350, midH + 175, 194, 94, 10 )
+    bgRedem:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } )
     bgRedem:addEventListener( 'tap', confirmRedem)
     grpQrR:insert( bgRedem )
     
@@ -192,7 +194,7 @@ function scene:create( event )
         x = midW + 140, y = midH + 175, width = 170,
         fontSize = 25, font = fontRegular, align = 'center'
     })
-    lblConfirmar1:setFillColor( .1 )
+    lblConfirmar1:setFillColor( unpack(cWhite) )
     grpQrR:insert(lblConfirmar1)
     
     local lblConfirmar = display.newText({
@@ -200,7 +202,7 @@ function scene:create( event )
         x = midW + 350, y = midH + 175,
         fontSize = 25, font = fontSemiBold
     })
-    lblConfirmar:setFillColor( .1 )
+    lblConfirmar:setFillColor( unpack(cWhite) )
     grpQrR:insert(lblConfirmar)
     
 end	

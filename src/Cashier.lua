@@ -7,7 +7,7 @@ require('src.Globals')
 
 -- Grupos y Contenedores
 local scene = composer.newScene()
-local screen, cashierId, scrRedens, grpCashier, grpRedens, lblRTitle
+local screen, cashierId, scrRedens, grpCashier, grpRedens, lblRTitle, lblRUser
 local redens = {}
 
 
@@ -19,6 +19,16 @@ local redens = {}
 function tapReturn(event)
     composer.removeScene( "src.Home" )
     composer.gotoScene("src.Home", { time = 400, effect = "slideRight" })
+    return true
+end
+
+-------------------------------------
+-- Regresamos a Home
+-- @param event objeto evento
+------------------------------------
+function tapCash(event)
+    composer.removeScene( "src.Cash" )
+    composer.gotoScene("src.Cash", { time = 400, effect = "slideLeft" })
     return true
 end
 
@@ -94,6 +104,11 @@ function tapReden(event)
     grpRedens.y = event.target.y
     grpRedens.reden = redens[idx].reden
     lblRTitle.text = redens[idx].reden.reward
+    local userName = ''
+    if redens[idx].reden.user then
+        userName = redens[idx].reden.user
+    end
+    lblRUser.text = userName
     return true
 end
 
@@ -107,11 +122,11 @@ function showRedenciones(items)
         
         redens[z] = {}
         redens[z].reden = items[z]
-        local bgR = display.newRoundedRect( 350, curY, 700, 140, 10 )
+        local bgR = display.newRoundedRect( 350, curY, 700, 140, 5 )
         bgR:setFillColor( unpack(cAqua) )
         scrRedens:insert( bgR )
         
-        local bgRW = display.newRoundedRect( 350, curY, 680, 120, 10 )
+        local bgRW = display.newRoundedRect( 350, curY, 694, 134, 5 )
         bgRW.idx = z
         bgRW:addEventListener( 'tap', tapReden)
         bgRW:setFillColor( 1 )
@@ -119,6 +134,8 @@ function showRedenciones(items)
         
         local bgPhoto = display.newImage( "img/bgPhoto.png" )
         bgPhoto:translate(70, curY)
+        bgPhoto.height = 130
+        bgPhoto.width = 130
         scrRedens:insert( bgPhoto )
         
         local userName = ''
@@ -127,8 +144,8 @@ function showRedenciones(items)
         end
         local lblUser = display.newText({
             text = userName, 
-            x = 343, y = curY - 35,
-            fontSize = 20, width = 400, align = "left",
+            x = 340, y = curY - 35,
+            fontSize = 20, width = 370, align = "left",
             font = fontRegular,   
 
         })
@@ -147,7 +164,7 @@ function showRedenciones(items)
             
         local lblTitle = display.newText({
             text = items[z].reward,
-            x = 410, y = curY + 5,
+            x = 420, y = curY + 5,
             fontSize = 26, width = 530, align = "left",
             font = fontSemiBold,   
 
@@ -161,34 +178,78 @@ function showRedenciones(items)
     grpRedens.alpha = 0
     scrRedens:insert(grpRedens)
     
-    local bgToR = display.newRect( 350, 0, 680, 120 )
+    local bgToR = display.newRect( 350, 0, 694, 134 )
     bgToR:addEventListener( 'tap', tapToBlock)
-    bgToR:setFillColor( unpack(cMarine) )
+    bgToR:setFillColor( unpack(cPurPle) )
     grpRedens:insert( bgToR )
     
-    local bgToReem = display.newRect( 90, 0, 160, 120 )
-    bgToReem:addEventListener( 'tap', tapToReem)
-    bgToReem:setFillColor( unpack(cMarine) )
+    local bgToReden = display.newRoundedRect( 70, 0, 140, 140, 5 )
+    bgToReden:setFillColor( unpack(cAqua) )
+    bgToReden:addEventListener( 'tap', tapToReem)
+    grpRedens:insert( bgToReden )
+    
+    local bgReden = display.newRoundedRect( 70, 0, 134, 134, 5 )
+    bgReden:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } )
+    grpRedens:insert( bgReden )
+    
+    local lblReden = display.newText({
+        text = "REEMBOLSAR",
+        x = 70, y = 0,
+        fontSize = 16,
+        font = fontSemiBold,   
+
+    })
+    lblReden:setFillColor( 1 )
+    grpRedens:insert( lblReden )
+    
+    local bgToReem = display.newRoundedRect( 630, 0, 140, 140, 5 )
+    bgToReem:setFillColor( unpack(cAqua) )
+    bgToReem:addEventListener( 'tap', tapToReden)
     grpRedens:insert( bgToReem )
     
-    local bgToRedem = display.newRect( 610, 0, 160, 120 )
-    bgToRedem:addEventListener( 'tap', tapToReden)
-    bgToRedem:setFillColor( unpack(cMarine) )
-    grpRedens:insert( bgToRedem )
+    local bgRedem = display.newRoundedRect( 630, 0, 134, 134, 5 )
+    bgRedem:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } )
+    grpRedens:insert( bgRedem )
     
-    local bgToReden = display.newImage( "img/toReden.png" )
-    bgToReden.x = 350
-    grpRedens:insert(bgToReden)
+    local lblRedem = display.newText({
+        text = "CANJEAR",
+        x = 630, y = 0,
+        fontSize = 23,
+        font = fontSemiBold,   
+
+    })
+    lblRedem:setFillColor( 1 )
+    grpRedens:insert( lblRedem )
     
     lblRTitle = display.newText({
         text = "",
-        x = 350, y = 0,
-        fontSize = 28, width = 280,
-        font = fontSemiBold,   
+        x = 420, y = 0,
+        fontSize = 26, width = 530, align = "left",
+        font = fontSemiBold,    
 
     })
     lblRTitle:setFillColor( 1 )
     grpRedens:insert( lblRTitle )
+    
+    lblRUser = display.newText({
+        text = "", 
+        x = 340, y = -40,
+        fontSize = 20, width = 370, align = "left",
+        font = fontRegular,   
+
+    })
+    lblRUser:setFillColor( 1 )
+    grpRedens:insert( lblRUser )
     
 end
 
@@ -197,36 +258,33 @@ end
 function scene:create( event )
     screen = self.view
     
-    local imgBg = display.newImage( "img/bg.png" )
-    imgBg.x = midW
-    imgBg.y = midH
-    screen:insert(imgBg)
-    
-    local imgClouds = display.newImage( "img/clouds.png" )
-    imgClouds.anchorX = 0
-    imgClouds.anchorY = 0
-    screen:insert(imgClouds)
-    
-    local imgCorners = display.newImage( "img/corner.png" )
-    imgCorners.anchorX = 1
-    imgCorners.anchorY = 1
-    imgCorners.x = intW
-    imgCorners.y = intH
-    screen:insert(imgCorners)
+    local bg = display.newRect( midW, midH, intW, intH )
+    bg:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } ) 
+    screen:insert(bg)
     
     grpCashier = display.newGroup()
-    --grpCashier.alpha = 0
     screen:insert(grpCashier)
     
-    local btnBack = display.newImage( "img/btnBack.png" )
-    btnBack.x = 170
-    btnBack.y = 80
+    local btnBack = display.newImage( "img/iconPrev.png" )
+    btnBack.x = midW - 450
+    btnBack.y = 110
     btnBack:addEventListener( 'tap', tapReturn)
     grpCashier:insert(btnBack)
     
+    local iconCash = display.newImage( "img/iconCash.png" )
+    iconCash.x = midW + 440
+    iconCash.y = 110
+    iconCash:addEventListener( 'tap', tapCash)
+    grpCashier:insert(iconCash)
+    
     local lblTitle = display.newText({
         text = "RECOMPENSAS LISTAS PARA CANJEAR:", 
-        x = midW, y = midH -255,
+        x = midW, y = midH -270,
         fontSize = 28, width = 700, align = "left",
         font = fontSemiBold,   
         
