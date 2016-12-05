@@ -7,6 +7,7 @@ require('src.Globals')
 
 -- Grupos y Contenedores
 local scene = composer.newScene()
+local grpMsg, grpCash
 local lblTicket, lblMonto, bgTicket, bgMonto, bgRed
 local txtActive = ''
 
@@ -19,6 +20,93 @@ function tapReturn(event)
     composer.removeScene( "src.Home" )
     composer.gotoScene("src.Home", { time = 400, effect = "slideRight" })
     return true
+end
+
+-------------------------------------
+-- Nuevo Usuario
+-- @param item objeto usuario
+------------------------------------
+function toNewUser(item)
+    composer.removeScene( "src.NewUser" )
+    composer.gotoScene("src.NewUser", { time = 0, params = {user = item} })
+    return true
+end
+
+-------------------------------------
+-- Muestra pantalla Recompensas
+-- @param item objeto usuario
+------------------------------------
+function toRewards(item)
+    composer.removeScene( "src.Rewards" )
+    composer.gotoScene("src.Rewards", { time = 0, params = {user = item} })
+    return true
+end
+
+-------------------------------------
+-- Mostramos Camara
+-- @param event objeto evento
+------------------------------------
+function toCamera(event)
+    -- Validas conexion
+    if RestManager.networkConnection() then
+        audio.play( fxTap )
+        if OpenCamera then
+            OpenCamera.init()
+        else
+            validate('4040000001204974') --Cashier
+        end
+    else
+        showMsg("Asegurese de estar conectado a internet")
+    end
+    return true
+end
+
+-------------------------------------
+-- Validamos Codigo
+-- @param event objeto evento
+------------------------------------
+function validate(qr)
+    if string.len(qr) == 16 then
+        local ticket = lblTicket.text
+        if ticket == '' then
+            ticket = '-'
+        end
+        RestManager.updPts(qr, lblMonto.data, ticket)
+    else
+        invalidCard()
+    end
+    return true
+end
+
+-------------------------------------
+-- Mensaje Tarjeta Invalida
+------------------------------------
+function invalidCard()
+    local grpMsg = display.newGroup()
+    grpMsg.alpha = 0
+    screen:insert(grpMsg)
+    
+    function setDes(event)
+            return true
+    end
+    local bgShadow = display.newRect( 0, 0, intW, intH )
+    bgShadow:addEventListener( 'tap', setDes)
+    bgShadow.alpha = .5
+    bgShadow.anchorX = 0
+    bgShadow.anchorY = 0
+    bgShadow:setFillColor( 0 )
+    grpMsg:insert(bgShadow)
+    
+    local imgBg = display.newImage( "img/invalidCard.png" )
+    imgBg.x = midW
+    imgBg.y = midH
+    grpMsg:insert(imgBg)
+    
+    transition.to( grpMsg, { alpha = 1, time = 500 })
+    transition.to( grpCash, { alpha = 0, time = 500 })
+    transition.to( grpCash, { alpha = 1, time = 500, delay = 4000 })
+    transition.to( grpMsg, { alpha = 0, time = 500, delay = 4000 })
+    audio.play( fxError)
 end
 
 -------------------------------------
@@ -46,6 +134,7 @@ function tapBtnKey(event)
             transition.to( bgRed, { alpha = 1, time = 400 })
             transition.to( bgRed, { alpha = .01, time = 400, delay = 450 })
         else
+            toCamera()
         end
     else
         if not(txtActive == '') then
@@ -126,11 +215,14 @@ function scene:create( event )
     } ) 
     screen:insert(bg)
     
+    grpCash = display.newGroup()
+    screen:insert(grpCash)
+    
     local btnBack = display.newImage( "img/iconPrev.png" )
     btnBack.x = midW - 450
     btnBack.y = 110
     btnBack:addEventListener( 'tap', tapReturn)
-    screen:insert(btnBack)
+    grpCash:insert(btnBack)
     
     -- Fields
     local lblTicket0 = display.newText({
@@ -141,7 +233,7 @@ function scene:create( event )
         
     })
     lblTicket0:setFillColor( 1 )
-    screen:insert(lblTicket0)
+    grpCash:insert(lblTicket0)
     
     local lblMonto0 = display.newText({
         text = "MONTO DEL CONSUMO:", 
@@ -151,32 +243,32 @@ function scene:create( event )
         
     })
     lblMonto0:setFillColor( 1 )
-    screen:insert(lblMonto0)
+    grpCash:insert(lblMonto0)
     
     bgTicket = display.newRoundedRect( midW + 185, midH - 280, 350, 70, 5 )
     bgTicket:setFillColor( unpack(cAqua) ) 
     bgTicket.field = 'ticket'
     bgTicket:addEventListener( 'tap', tapField)
-    screen:insert(bgTicket)
+    grpCash:insert(bgTicket)
     
     bgMonto = display.newRoundedRect( midW + 185, midH - 190, 350, 70, 5 )
     bgMonto:setFillColor( unpack(cAqua) )
     bgMonto.field = 'monto'
     bgMonto:addEventListener( 'tap', tapField) 
-    screen:insert(bgMonto)
+    grpCash:insert(bgMonto)
     
     local bgField1 = display.newRoundedRect( midW + 185, midH - 280, 340, 60, 5 )
     bgField1:setFillColor( unpack(cWhite) ) 
-    screen:insert(bgField1)
+    grpCash:insert(bgField1)
     
     local bgField2 = display.newRoundedRect( midW + 185, midH - 190, 340, 60, 5 )
     bgField2:setFillColor( unpack(cWhite) ) 
-    screen:insert(bgField2)
+    grpCash:insert(bgField2)
     
     bgRed = display.newRoundedRect( midW + 185, midH - 190, 340, 60, 5 )
     bgRed:setFillColor( .5, 0, 0 ) 
     bgRed.alpha = .01
-    screen:insert(bgRed)
+    grpCash:insert(bgRed)
     
     lblTicket = display.newText({
         text = "", 
@@ -186,7 +278,7 @@ function scene:create( event )
         
     })
     lblTicket:setFillColor( 0 )
-    screen:insert(lblTicket)
+    grpCash:insert(lblTicket)
     
     lblMonto = display.newText({
         text = "", 
@@ -197,7 +289,7 @@ function scene:create( event )
     })
     lblMonto.data = ''
     lblMonto:setFillColor( 0 )
-    screen:insert(lblMonto)
+    grpCash:insert(lblMonto)
     
     -- Keyboard
     local resid, posX, posY
@@ -215,7 +307,7 @@ function scene:create( event )
         bgBtn1:setFillColor( unpack(cWhite) ) 
         bgBtn1.alpha = .7
         bgBtn1.value = chart[z]
-        screen:insert(bgBtn1)
+        grpCash:insert(bgBtn1)
         bgBtn1:addEventListener( 'tap', tapBtnKey ) 
         
         local bgBtn2 = display.newRoundedRect( midW + posX, midH + posY, 114, 94, 5 )
@@ -225,7 +317,7 @@ function scene:create( event )
             color2 = { unpack(cPurPle) },
             direction = "bottom"
         } ) 
-        screen:insert(bgBtn2)
+        grpCash:insert(bgBtn2)
         if z == 10 or z == 12 then
              bgBtn2:setFillColor( unpack(cPurPle) ) 
         end
@@ -233,7 +325,7 @@ function scene:create( event )
         if z == 10 then
             local iconBackSpace = display.newImage( "img/iconBackSpace.png" )
             iconBackSpace:translate(midW + posX, midH + posY)
-            screen:insert(iconBackSpace)
+            grpCash:insert(iconBackSpace)
         else
             local lblChart = display.newText({
                 text = chart[z], 
@@ -241,7 +333,7 @@ function scene:create( event )
                 fontSize = 40, font = fontSemiBold
             })
             lblChart:setFillColor( unpack(cWhite) )
-            screen:insert(lblChart)
+            grpCash:insert(lblChart)
         end
         
     end

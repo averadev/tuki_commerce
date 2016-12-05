@@ -158,6 +158,32 @@ local RestManager = {}
     -- Validar QR
     -- @param qr codigo tarjeta
     ------------------------------------
+    RestManager.updPts = function(qr, val, ticket)
+        local url = site.."commerce/updPts/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/val/"..val.."/ticket/"..ticket
+        print(url)
+        local function callback(event)
+            if ( event.isError ) then
+            else
+                local data = json.decode(event.response)
+                if data.cashier then
+                    invalidCard()
+                elseif data.newUser then
+                    toNewUser(data.user)
+                elseif data.user then
+                    toRewards(data.user)
+                end
+                --showPoints(data.points)
+            end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+    end
+
+    -------------------------------------
+    -- Validar QR
+    -- @param qr codigo tarjeta
+    ------------------------------------
     RestManager.validateQR = function(qr)
 		local url = site.."commerce/validateQR/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr
         print(url)
