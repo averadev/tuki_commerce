@@ -602,6 +602,15 @@ function scene:create( event )
     loading:setSequence("play")
     loading:play()
     
+    local lblVersion = display.newText({
+        text = "2.0", align = "right",
+        x = intW-70, y = intH - 20, width = 100,
+        font = fontSemiBold, fontSize = 14
+    })
+    lblVersion:setFillColor( 1 )
+    lblVersion.alpha = .3
+    grpHome:insert(lblVersion)
+    
     -- Verify connection
     if RestManager.networkConnection() then
         RestManager.reloadConfig()
