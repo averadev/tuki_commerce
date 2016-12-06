@@ -11,7 +11,9 @@ local composer = require( "composer" )
 
 local function onSystemEvent(event)
     print("event.type:"..event.type)
-	if event.type == "applicationResume" and "src.Home" == composer.getSceneName( "current" )then
+	if event.type == "applicationResume" and 
+        ("src.Home" == composer.getSceneName( "current" )
+        or "src.Cash" == composer.getSceneName( "current" ) )then
         config = DBManager.getSettings() 
         print("config:"..config.qr)
         if config.qr == '' then
