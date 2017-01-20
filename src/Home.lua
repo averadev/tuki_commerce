@@ -5,9 +5,71 @@ local fxTap = audio.loadSound( "fx/tap.wav")
 require('src.Globals')
 
 -- Grupos y Contenedores
-local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM, grpMsgS
-local timerBottom, lblHPoints, lblHDesc, imgHReward, loading, txtExit, itsPoints = false
+local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM, grpMsgS, bgScr, lblVersion
+local timerBottom, lblHPoints, lblHPoints2, lblHDesc, imgHReward, loading, txtExit, itsPoints = false
+local xtraW, bgBottom1, bgBottom2, bgPointsHome, phone, grpBtnGo, logoTuki, bgImgRew, iconPoints
 local scene = composer.newScene()
+
+-------------------------------------
+-- Rotate screen
+-- @param item objeto usuario
+------------------------------------
+function rotateScr()
+    intW = display.contentWidth
+    intH = display.contentHeight
+    midW = intW / 2
+    midH = intH / 2
+    bgScr.width = intW
+    bgScr.height = intH
+    
+    -- Change positions
+    bgBottom1.width = intW
+    bgBottom1.x = midW
+    bgBottom2.width = intW
+    bgBottom2.x = midW
+    iconPoints.x = intW - 30
+    bgImgRew.x = intW - 160
+    lblVersion.x = intW - 70
+    lblVersion.y = intH - 20
+    if imgHReward then
+        imgHReward.x = intW - 160
+    end
+    
+    if position == 'landscapeLeft' or position == 'landscapeRight' then
+        bgBottom1.y = intH -140
+        bgBottom2.y = intH -140
+        bgPointsHome.y = intH - 140
+        grpBottom.y = intH - 140
+        bgImgRew.y = intH - 140
+        if imgHReward then
+            imgHReward.y = intH - 140
+        end
+        lblHDesc.y = 0
+        phone.x = (midW - xtraW) - 240 
+        phone.y = midH + 150
+        logoTuki.x = (midW - xtraW) - 240 
+        logoTuki.y = midH - 50
+        grpBtnGo.x = (midW + xtraW) + 280 
+        grpBtnGo.y = midH
+    else
+        bgBottom1.y = midH + 400
+        bgBottom2.y = midH + 400
+        bgPointsHome.y = midH + 400
+        grpBottom.y = midH + 400
+        bgImgRew.y = midH + 400
+        if imgHReward then
+            imgHReward.y = midH + 400
+        end
+        lblHDesc.y = 500
+        phone.x = midW
+        phone.y = midH
+        logoTuki.x = midW
+        logoTuki.y = midH - 200
+        grpBtnGo.x = midW
+        grpBtnGo.y = midH + 160
+        
+    end
+end
 
 -------------------------------------
 -- Nuevo Usuario
@@ -108,7 +170,7 @@ function toCamera(event)
             OpenCamera.init()
         else
             --validate('4000000000001641') --User
-            validate('1021238449002901') --Cashier
+            validate('1021444472002964') --Cashier
             --validate('4000000000001641-27') --UserReward
         end
     else
@@ -165,7 +227,6 @@ end
 -- @param event objeto evento
 ------------------------------------
 function changeReward()
-    
     local random = math.random(#rewardsH)
     lblHPoints.text = rewardsH[random].points
     lblHDesc.text = rewardsH[random].name
@@ -177,9 +238,9 @@ function changeReward()
     imgHReward = display.newImage( rewardsH[random].image, system.TemporaryDirectory )
     imgHReward.height = 204
     imgHReward.width = 272
-    imgHReward.x = intW - 160
-    imgHReward.y = intH - 140
-    grpBottom:insert(imgHReward)
+    imgHReward.x = bgImgRew.x
+    imgHReward.y = bgImgRew.y
+    grpHome:insert(imgHReward)
     
     grpBottom.alpha = 0
     transition.to( grpBottom, { alpha = 1, time = 1000 })
@@ -471,19 +532,21 @@ end
 -- Called immediately on call
 function scene:create( event )
     screen = self.view
-    local xtraW = 0
+    xtraW = 0
     if intW > 1050 then
         xtraW = (intW - 1050) / 5
     end
     
-    local bg = display.newRect( midW, midH, intW, intH )
-    bg:setFillColor( {
+    bgScr = display.newRect( 0, 0, intW, intH )
+    bgScr:setFillColor( {
         type = 'gradient',
         color1 = { unpack(cTurquesa) }, 
         color2 = { unpack(cPurPle) },
         direction = "bottom"
     } ) 
-    screen:insert(bg)
+    bgScr.anchorY=0
+    bgScr.anchorX=0
+    screen:insert(bgScr)
     
     local iconExit = display.newImage( "img/iconExit.png" )
     iconExit.x = 30
@@ -491,7 +554,7 @@ function scene:create( event )
     iconExit:addEventListener( 'tap', showExit) 
     screen:insert(iconExit)
     
-    local iconPoints = display.newImage( "img/iconPoints.png" )
+    iconPoints = display.newImage( "img/iconPoints.png" )
     iconPoints.x = intW - 30
     iconPoints.y = 40
     iconPoints:addEventListener( 'tap', function()
@@ -504,70 +567,77 @@ function scene:create( event )
     grpHome.alpha = 0
     screen:insert(grpHome)
     
-    local logoTuki = display.newImage( "img/logoTuki.png" )
+    logoTuki = display.newImage( "img/logoTuki.png" )
     logoTuki.x = (midW - xtraW) - 240 
     logoTuki.y = midH - 50
     grpHome:insert(logoTuki)
     
-    local phone = display.newImage( "img/phone.png" )
+    phone = display.newImage( "img/phone.png" )
     phone.x = (midW - xtraW) - 240 
-    phone.y = midH + 120
+    phone.y = midH + 150
     grpHome:insert(phone)
+    
+    grpBtnGo = display.newContainer( 400, 500 )
+    grpBtnGo.x = (midW + xtraW) + 280 
+    grpBtnGo.y = midH
+    grpHome:insert( grpBtnGo )
     
     local lbl1 = display.newText({
         text = "GANA RECOMPENSAS", 
-        x = (midW + xtraW) + 280, y = midH - 250,
+        x = 0, y = -220,
         width = 400,
         font = fontBold,   
         fontSize = 35, align = "center"
     })
     lbl1:setFillColor( 1 )
-    grpHome:insert(lbl1)
+    grpBtnGo:insert(lbl1)
     
     local lbl2 = display.newText({
         text = "EN TUS COMPRAS...", 
-        x = (midW + xtraW) + 280, y = midH - 200,
+        x = 0, y = -170,
         width = 400,
         font = fontRegular,   
         fontSize = 35, align = "center"
     })
     lbl2:setFillColor( 1 )
-    grpHome:insert(lbl2)
+    grpBtnGo:insert(lbl2)
     
     local stores = display.newImage( "img/stores.png" )
-    stores.x = (midW + xtraW) + 280 
-    stores.y = midH - 110
-    grpHome:insert(stores)
+    stores.x = 0
+    stores.y = -100
+    grpBtnGo:insert(stores)
     
     local imgToCheckIn = display.newImage( "img/toCheckIn.png" )
-    imgToCheckIn.x = (midW + xtraW) + 280 
-    imgToCheckIn.y = midH + 30
+    imgToCheckIn.x = 0
+    imgToCheckIn.y = 30
     imgToCheckIn:addEventListener( 'tap', toCamera) 
-    grpHome:insert(imgToCheckIn)
+    grpBtnGo:insert(imgToCheckIn)
     
     -- Bottom Section
-    local bgBottom1 = display.newRect( midW, intH -140, intW, 204 )
+    bgBottom1 = display.newRect( midW, intH -140, intW, 204 )
     bgBottom1:setFillColor( unpack(cTurquesa) )
     grpHome:insert( bgBottom1 )
-    local bgBottom2 = display.newRect( midW, intH -140, intW, 200 )
+    bgBottom2 = display.newRect( midW, intH -140, intW, 200 )
     bgBottom2:setFillColor( unpack(cPurPle) )
     grpHome:insert( bgBottom2 )
     
-    local bgPointsHome = display.newImage( "img/bgPointsHome.png" )
+    bgPointsHome = display.newImage( "img/bgPointsHome.png" )
     bgPointsHome.x = 110
     bgPointsHome.y = intH - 140
     grpHome:insert(bgPointsHome)
     
-    local bgImg = display.newRoundedRect( intW - 160, intH - 140, 282, 214, 10 )
-    bgImg:setFillColor( 11/225, 163/225, 212/225 )
-    grpHome:insert(bgImg)
+    bgImgRew = display.newRoundedRect( intW - 160, intH - 140, 282, 214, 10 )
+    bgImgRew:setFillColor( 11/225, 163/225, 212/225 )
+    grpHome:insert(bgImgRew)
     
-    grpBottom = display.newGroup()
+    grpBottom = display.newContainer( intW, 380 )
+    grpBottom.anchorX = 0
+    grpBottom.y = intH - 140
     grpHome:insert( grpBottom )
     
     lblHPoints = display.newText({
         text = "", 
-        x = 110, y = intH - 165,
+        x = -midW+110, y = -25,
         width = 150,
         font = fontSemiBold,   
         fontSize = 70, align = "center"
@@ -577,7 +647,7 @@ function scene:create( event )
     
     lblHPoints2 = display.newText({
         text = "PUNTOS", 
-        x = 110, y = intH - 110,
+        x = -midW+110, y = 20,
         width = 150,
         font = fontSemiBold,   
         fontSize = 30, align = "center"
@@ -587,10 +657,11 @@ function scene:create( event )
     
     lblHDesc = display.newText({
         text = "", 
-        x = midW - 35, y = intH - 140, width = intW - 530,
+        x = -midW+220, y = 0, width = intW - 530,
         font = fontSemiBold,   
         fontSize = 50, align = "left"
     })
+    lblHDesc.anchorX = 0
     lblHDesc:setFillColor( 1 )
     grpBottom:insert(lblHDesc)
     
@@ -602,7 +673,7 @@ function scene:create( event )
     loading:setSequence("play")
     loading:play()
     
-    local lblVersion = display.newText({
+    lblVersion = display.newText({
         text = "2.0", align = "right",
         x = intW-70, y = intH - 20, width = 100,
         font = fontSemiBold, fontSize = 14
@@ -622,7 +693,9 @@ end
 
 -- Called immediately after scene has moved onscreen:
 function scene:show( event )
-    
+    if ( event.phase == "will" ) then
+        rotateScr()
+    end
 end
 
 -- Hide scene

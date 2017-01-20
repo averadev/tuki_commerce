@@ -12,6 +12,7 @@ midH = display.contentCenterY
 hm3 = intH / 3
 h = display.topStatusBarContentHeight
 logoCom = ''
+position = 'portrait'
 
 -- Fonts
 fontLight = 'Raleway Light'

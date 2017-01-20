@@ -7,10 +7,35 @@ require('src.Globals')
 
 -- Grupos y Contenedores
 local scene = composer.newScene()
-local grpMsg, grpCash
+local grpMsg, grpCash, bgScr, btnBack
 local lblTicket, lblMonto, bgTicket, bgMonto, bgRed
 local txtActive = ''
 
+-------------------------------------
+-- Rotate screen
+-- @param item objeto usuario
+------------------------------------
+function rotateScr()
+    intW = display.contentWidth
+    intH = display.contentHeight
+    midW = intW / 2
+    midH = intH / 2
+    bgScr.width = intW
+    bgScr.height = intH
+    
+    -- Change positions
+    if position == 'landscapeLeft' or position == 'landscapeRight' then
+        grpCash.x = midW
+        grpCash.y = midH
+        btnBack.x = midW - 450
+        btnBack.y = 110
+    else
+        grpCash.x = midW
+        grpCash.y = 450
+        btnBack.x = 50
+        btnBack.y = 90
+    end
+end
 
 -------------------------------------
 -- Regresamos a Home
@@ -206,28 +231,32 @@ end
 function scene:create( event )
     screen = self.view
     
-    local bg = display.newRect( midW, midH, intW, intH )
-    bg:setFillColor( {
+    bgScr = display.newRect( 0, 0, intW, intH )
+    bgScr:setFillColor( {
         type = 'gradient',
         color1 = { unpack(cTurquesa) }, 
         color2 = { unpack(cPurPle) },
         direction = "bottom"
     } ) 
-    screen:insert(bg)
+    bgScr.anchorY = 0
+    bgScr.anchorX = 0
+    screen:insert(bgScr)
     
-    grpCash = display.newGroup()
-    screen:insert(grpCash)
-    
-    local btnBack = display.newImage( "img/iconPrev.png" )
+    btnBack = display.newImage( "img/iconPrev.png" )
     btnBack.x = midW - 450
     btnBack.y = 110
     btnBack:addEventListener( 'tap', tapReturn)
-    grpCash:insert(btnBack)
+    screen:insert(btnBack)
+    
+    grpCash = display.newContainer( 750, 750 )
+    grpCash.x = midW 
+    grpCash.y = midH
+    screen:insert(grpCash)
     
     -- Fields
     local lblTicket0 = display.newText({
         text = "NUMERO DE TICKET:", 
-        x = midW, y = midH - 280,
+        x = 0, y = -280,
         fontSize = 28, width = 700, align = "left",
         font = fontSemiBold,   
         
@@ -237,7 +266,7 @@ function scene:create( event )
     
     local lblMonto0 = display.newText({
         text = "MONTO DEL CONSUMO:", 
-        x = midW, y = midH - 190,
+        x = 0, y = -190,
         fontSize = 28, width = 700, align = "left",
         font = fontSemiBold,   
         
@@ -245,34 +274,34 @@ function scene:create( event )
     lblMonto0:setFillColor( 1 )
     grpCash:insert(lblMonto0)
     
-    bgTicket = display.newRoundedRect( midW + 185, midH - 280, 350, 70, 5 )
+    bgTicket = display.newRoundedRect(185, -280, 350, 70, 5 )
     bgTicket:setFillColor( unpack(cAqua) ) 
     bgTicket.field = 'ticket'
     bgTicket:addEventListener( 'tap', tapField)
     grpCash:insert(bgTicket)
     
-    bgMonto = display.newRoundedRect( midW + 185, midH - 190, 350, 70, 5 )
+    bgMonto = display.newRoundedRect( 185, -190, 350, 70, 5 )
     bgMonto:setFillColor( unpack(cAqua) )
     bgMonto.field = 'monto'
     bgMonto:addEventListener( 'tap', tapField) 
     grpCash:insert(bgMonto)
     
-    local bgField1 = display.newRoundedRect( midW + 185, midH - 280, 340, 60, 5 )
+    local bgField1 = display.newRoundedRect( 185, -280, 340, 60, 5 )
     bgField1:setFillColor( unpack(cWhite) ) 
     grpCash:insert(bgField1)
     
-    local bgField2 = display.newRoundedRect( midW + 185, midH - 190, 340, 60, 5 )
+    local bgField2 = display.newRoundedRect( 185, -190, 340, 60, 5 )
     bgField2:setFillColor( unpack(cWhite) ) 
     grpCash:insert(bgField2)
     
-    bgRed = display.newRoundedRect( midW + 185, midH - 190, 340, 60, 5 )
+    bgRed = display.newRoundedRect( 185, -190, 340, 60, 5 )
     bgRed:setFillColor( .5, 0, 0 ) 
     bgRed.alpha = .01
     grpCash:insert(bgRed)
     
     lblTicket = display.newText({
         text = "", 
-        x = midW + 185, y = midH - 280,
+        x = 185, y = -280,
         fontSize = 28, width = 300, align = "right",
         font = fontSemiBold,   
         
@@ -282,7 +311,7 @@ function scene:create( event )
     
     lblMonto = display.newText({
         text = "", 
-        x = midW + 185, y = midH - 190,
+        x = 185, y = -190,
         fontSize = 28, width = 300, align = "right",
         font = fontSemiBold,   
         
@@ -303,14 +332,14 @@ function scene:create( event )
         posY = math.floor((z+2) / 3 )
         posY = -180 + (120*posY) 
         
-        local bgBtn1 = display.newRoundedRect( midW + posX, midH + posY, 120, 100, 5 )
+        local bgBtn1 = display.newRoundedRect( posX, posY, 120, 100, 5 )
         bgBtn1:setFillColor( unpack(cWhite) ) 
         bgBtn1.alpha = .7
         bgBtn1.value = chart[z]
         grpCash:insert(bgBtn1)
         bgBtn1:addEventListener( 'tap', tapBtnKey ) 
         
-        local bgBtn2 = display.newRoundedRect( midW + posX, midH + posY, 114, 94, 5 )
+        local bgBtn2 = display.newRoundedRect( posX, posY, 114, 94, 5 )
         bgBtn2:setFillColor( {
             type = 'gradient',
             color1 = { unpack(cTurquesa) }, 
@@ -324,19 +353,20 @@ function scene:create( event )
         
         if z == 10 then
             local iconBackSpace = display.newImage( "img/iconBackSpace.png" )
-            iconBackSpace:translate(midW + posX, midH + posY)
+            iconBackSpace:translate(posX, posY)
             grpCash:insert(iconBackSpace)
         else
             local lblChart = display.newText({
                 text = chart[z], 
-                x = midW + posX, y = midH + posY,
+                x = posX, y = posY,
                 fontSize = 40, font = fontSemiBold
             })
             lblChart:setFillColor( unpack(cWhite) )
             grpCash:insert(lblChart)
-        end
-        
+        end 
     end
+    
+    rotateScr()
 end	
 
 -- Called immediately after scene has moved onscreen:

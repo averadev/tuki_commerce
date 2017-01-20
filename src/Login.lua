@@ -5,8 +5,36 @@ local fxTap = audio.loadSound( "fx/tap.wav")
 require('src.Globals')
 
 -- Grupos y Contenedores
-local screen, loginText, grpLogin, txtSignPass, grpLoading, grpMsg
+local screen, loginText, grpLogin, txtSignPass, grpLoading, grpMsg, logoWhite, bgScr
 local scene = composer.newScene()
+
+-------------------------------------
+-- Rotate screen
+-- @param item objeto usuario
+------------------------------------
+function rotateScr()
+    intW = display.contentWidth
+    intH = display.contentHeight
+    midW = intW / 2
+    midH = intH / 2
+    bgScr.width = display.contentWidth
+    bgScr.height = display.contentHeight
+    -- New parameters
+    local grpX = display.contentWidth / 2
+    local grpY = display.contentHeight / 2
+    local logoX = display.contentWidth / 2
+    local logoY = (display.contentHeight / 2) - 300
+    if position == 'landscapeLeft' or position == 'landscapeRight' then
+        grpX = (display.contentWidth / 2) + 230
+        logoX = (display.contentWidth/2) - 360
+        logoY = display.contentHeight / 2
+    end
+    -- Change positions
+    grpLogin.x = grpX
+    grpLogin.y = grpY
+    logoWhite.x = logoX
+    logoWhite.y = logoY
+end
 
 -------------------------------------
 -- Nuevo Usuario
@@ -26,7 +54,13 @@ end
 ------------------------------------
 function onTxtFocus(event)
     if ( "began" == event.phase ) then
-        transition.to( grpLogin, { y = (-midH + 170) + h, time = 400, transition = easing.outExpo } )
+        if position == 'landscapeLeft' or position == 'landscapeRight' then
+            transition.to( grpLogin, { y = 200, time = 400, transition = easing.outExpo } )
+            transition.to( logoWhite, { y = 200, time = 400, transition = easing.outExpo } )
+        else
+            transition.to( grpLogin, { y = 400, time = 400, transition = easing.outExpo } )
+            transition.to( logoWhite, { y = 150, time = 400, transition = easing.outExpo } )
+        end
     elseif ( "submitted" == event.phase ) then
         verifyKey()
     end
@@ -38,8 +72,7 @@ end
 function backTxtPositions()
     -- Hide Keyboard
     native.setKeyboardFocus(nil)
-    -- Interfaz Sign In
-    transition.to( grpLogin, { y = 0, time = 400, transition = easing.outExpo } )
+    rotateScr()
 end
 
 -------------------------------------
@@ -144,41 +177,45 @@ end
 function scene:create( event )
     screen = self.view
      
-    local bg = display.newRect( midW, midH, intW, intH )
-    bg:setFillColor( {
+    bgScr = display.newRect( 0, 0, intW, intH )
+    bgScr:setFillColor( {
         type = 'gradient',
         color1 = { unpack(cTurquesa) }, 
         color2 = { unpack(cPurPle) },
         direction = "bottom"
     } ) 
-    screen:insert(bg)
+    bgScr.anchorY=0
+    bgScr.anchorX=0
+    screen:insert(bgScr)
+     
+    logoWhite = display.newImage( "img/logoWhite.png" )
+    logoWhite:translate( midW, midH - 300 )
+    screen:insert(logoWhite)
     
     -- Login Elements
-    grpLogin = display.newGroup()
+    grpLogin = display.newContainer( 660, 380 )
+    grpLogin.x = midW
+    grpLogin.y = midH
     screen:insert(grpLogin)
     
     -- Line
-    local line = display.newLine( midW - 480, midH - 220, midW + 480, midH - 220,
-        midW + 480, midH + 150, midW - 480, midH + 150, midW - 480, midH - 220)
+    local line = display.newLine( -320, -150, 320, -150,
+        320, 150, -320, 150, -320, -150)
     line.strokeWidth = 3
     line:setStrokeColor( unpack(cTurquesa) )
     grpLogin:insert( line )
-     
-    local logoWhite = display.newImage( "img/logoWhite.png" )
-    logoWhite:translate( midW - 250, midH - 20 )
-    grpLogin:insert(logoWhite)
     
     -- Bg TextFields
-    local bgField = display.newRoundedRect( midW + 220, midH - 80, 470, 70, 5 )
+    local bgField = display.newRoundedRect( 0, -60, 470, 70, 5 )
     bgField:setFillColor( unpack(cWhite) )
     grpLogin:insert( bgField )
     local bgSignPass = display.newImage("img/iconCandado.png", true) 
-    bgSignPass.x = midW  + 20
-    bgSignPass.y = midH - 80
+    bgSignPass.x = -200
+    bgSignPass.y = -60
     grpLogin:insert(bgSignPass)
     
     -- TextFields Sign In
-    txtSignPass = native.newTextField( midW + 245, midH - 80, 400, 45 )
+    txtSignPass = native.newTextField( 25, -60, 400, 45 )
     txtSignPass.size = 25
     txtSignPass.isSecure = true
     txtSignPass.hasBackground = false
@@ -187,14 +224,14 @@ function scene:create( event )
 	grpLogin:insert(txtSignPass)
     
     -- Boton Canjear
-    local btnAccess = display.newRoundedRect( midW + 220, midH + 30, 470, 70, 5 )
+    local btnAccess = display.newRoundedRect( 0, 60, 470, 70, 5 )
     btnAccess:setFillColor( unpack(cTurquesa) )
     grpLogin:insert( btnAccess )
     btnAccess:addEventListener( 'tap', verifyKey)
 
     local lblAccess = display.newText({
         text = "ENTRAR", 
-        x = midW + 220, y = midH + 30, 
+        x = 0, y = 60, 
         fontSize = 30, width = 300,
         font = fontSemiBold, align = 'center'
 
@@ -204,7 +241,7 @@ function scene:create( event )
     
     local lblAccess = display.newText({
         text = "www.tukicard.com", 
-        x = midW, y = midH + 180, 
+        x = 0, y = 180, 
         fontSize = 25, width = 300,
         font = fontSemiBold, align = 'center'
 
@@ -212,7 +249,7 @@ function scene:create( event )
     lblAccess:setFillColor( unpack(cWhite) )
     grpLogin:insert(lblAccess)
     
-    
+    rotateScr()
 end	
 
 -- Called immediately after scene has moved onscreen:

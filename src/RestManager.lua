@@ -97,7 +97,37 @@ local RestManager = {}
             -- Descargamos de la nube
             display.loadRemoteImage( site.."assets/img/api/rewards/"..img, "GET", imageListener, img, system.TemporaryDirectory ) 
         end
-    end    
+    end   
+
+    -------------------------------------
+    -- Carga las fotos de los perfiles
+    -- @param fbid id de perfil
+    -- @param parent contenedor para la foto
+    ------------------------------------
+    RestManager.getFBImages = function(fbid, parent)
+        -- Verificamos si existe el codigo
+        local path = system.pathForFile( fbid..".png", system.TemporaryDirectory )
+        local fhd = io.open( path )
+        if fhd then
+            fhd:close()
+            if parent then
+                local imagen = display.newImage( fbid..".png", system.TemporaryDirectory )
+                parent:insert(imagen)
+            end
+        else
+            local function imageListener( event )
+                if ( event.isError ) then
+                else
+                    if parent then
+                        parent:insert(event.target)
+                    end
+                end
+            end
+            -- Descargamos de la nube
+            local url = "http://graph.facebook.com/"..fbid.."/picture?large&width=130&height=130"
+            display.loadRemoteImage( url, "GET", imageListener, fbid..".png", system.TemporaryDirectory ) 
+        end
+	end
 
 
     -------------------------------------
@@ -295,7 +325,7 @@ local RestManager = {}
             if ( event.isError ) then
             else
                 local data = json.decode(event.response)
-                showRedenciones(data.items)
+                showRedenciones(data)
             end
             return true
         end

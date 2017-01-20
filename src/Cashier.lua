@@ -8,8 +8,51 @@ require('src.Globals')
 -- Grupos y Contenedores
 local scene = composer.newScene()
 local screen, cashierId, scrRedens, grpCashier, grpRedens, lblRTitle, lblRUser
+local bgScr, lblTitle, btnBack, iconCash, grpLstRen
+local scrRH = 0
 local redens = {}
 
+
+-------------------------------------
+-- Rotate screen
+-- @param item objeto usuario
+------------------------------------
+function rotateScr()
+    intW = display.contentWidth
+    intH = display.contentHeight
+    midW = intW / 2
+    midH = intH / 2
+    bgScr.width = intW
+    bgScr.height = intH
+    
+    -- Change positions
+    if position == 'landscapeLeft' or position == 'landscapeRight' then
+        btnBack.x = midW - 450
+        btnBack.y = 110
+        iconCash.x = midW + 440
+        iconCash.y = 110
+        lblTitle.x = midW
+        lblTitle.y = midH -270
+        scrRedens.x = midW
+        scrRedens.y = 170
+        grpLstRen.y = 0
+        scrRedens.height = 550
+        scrRedens:setScrollHeight( scrRH )
+    else
+        btnBack.x = 50
+        btnBack.y = 90
+        iconCash.x = intW - 50
+        iconCash.y = 90
+        lblTitle.x = midW
+        lblTitle.y = 150
+        scrRedens.x = midW
+        scrRedens.y = 200
+        xtraScr = (intH - 250) - scrRedens.height
+        scrRedens.height = intH - 250
+        grpLstRen.y = (xtraScr / 2) * -1
+        scrRedens:setScrollHeight( scrRH - xtraScr )
+    end
+end
 
 
 -------------------------------------
@@ -116,7 +159,13 @@ end
 -- Mostrar redenciones
 -- @param event objeto evento
 ------------------------------------
-function showRedenciones(items)
+function showRedenciones(data)
+    -- Mostramos pago por consumo
+    if data.schema == '2' then
+        iconCash.alpha = 1
+    end
+    -- Mostramos redenciones por cerrar
+    local items = data.items
     for z = 1, #items, 1 do 
         local curY = (z*155) - 80
         
@@ -124,19 +173,30 @@ function showRedenciones(items)
         redens[z].reden = items[z]
         local bgR = display.newRoundedRect( 350, curY, 700, 140, 5 )
         bgR:setFillColor( unpack(cAqua) )
-        scrRedens:insert( bgR )
+        grpLstRen:insert( bgR )
         
         local bgRW = display.newRoundedRect( 350, curY, 694, 134, 5 )
         bgRW.idx = z
         bgRW:addEventListener( 'tap', tapReden)
         bgRW:setFillColor( 1 )
-        scrRedens:insert( bgRW )
+        grpLstRen:insert( bgRW )
         
         local bgPhoto = display.newImage( "img/bgPhoto.png" )
         bgPhoto:translate(70, curY)
         bgPhoto.height = 130
         bgPhoto.width = 130
-        scrRedens:insert( bgPhoto )
+        grpLstRen:insert( bgPhoto )
+        
+        -- Mostramos foto de perfil
+        if items[z].fbid then
+            if not (items[z].fbid == '') then
+                local fbImg = display.newContainer( 130, 130 )
+                fbImg.x = 70
+                fbImg.y = curY
+                grpLstRen:insert( fbImg )
+                RestManager.getFBImages(items[z].fbid, fbImg)
+            end
+        end
         
         local userName = ''
         if items[z].user then
@@ -150,7 +210,7 @@ function showRedenciones(items)
 
         })
         lblUser:setFillColor( unpack(cGrayLow) )
-        scrRedens:insert( lblUser )
+        grpLstRen:insert( lblUser )
             
         local lblDate = display.newText({
             text = items[z].dateTexto, 
@@ -160,23 +220,25 @@ function showRedenciones(items)
 
         })
         lblDate:setFillColor( unpack(cGrayLow) )
-        scrRedens:insert( lblDate )
+        grpLstRen:insert( lblDate )
             
-        local lblTitle = display.newText({
+        local lblReward = display.newText({
             text = items[z].reward,
             x = 420, y = curY + 5,
             fontSize = 26, width = 530, align = "left",
             font = fontSemiBold,   
 
         })
-        lblTitle:setFillColor( unpack(cMarine) )
-        scrRedens:insert( lblTitle )
+        lblReward:setFillColor( unpack(cMarine) )
+        grpLstRen:insert( lblReward )
         
     end
+    scrRH = #items * 155
+    scrRedens:setScrollHeight( scrRH )
     
     grpRedens = display.newGroup()
     grpRedens.alpha = 0
-    scrRedens:insert(grpRedens)
+    grpLstRen:insert(grpRedens)
     
     local bgToR = display.newRect( 350, 0, 694, 134 )
     bgToR:addEventListener( 'tap', tapToBlock)
@@ -258,31 +320,34 @@ end
 function scene:create( event )
     screen = self.view
     
-    local bg = display.newRect( midW, midH, intW, intH )
-    bg:setFillColor( {
+    bgScr = display.newRect( 0, 0, intW, intH )
+    bgScr:setFillColor( {
         type = 'gradient',
         color1 = { unpack(cTurquesa) }, 
         color2 = { unpack(cPurPle) },
         direction = "bottom"
     } ) 
-    screen:insert(bg)
+    bgScr.anchorY = 0
+    bgScr.anchorX = 0
+    screen:insert(bgScr)
     
     grpCashier = display.newGroup()
     screen:insert(grpCashier)
     
-    local btnBack = display.newImage( "img/iconPrev.png" )
+    btnBack = display.newImage( "img/iconPrev.png" )
     btnBack.x = midW - 450
     btnBack.y = 110
     btnBack:addEventListener( 'tap', tapReturn)
     grpCashier:insert(btnBack)
     
-    local iconCash = display.newImage( "img/iconCash.png" )
+    iconCash = display.newImage( "img/iconCash.png" )
     iconCash.x = midW + 440
     iconCash.y = 110
+    iconCash.alpha = 0
     iconCash:addEventListener( 'tap', tapCash)
     grpCashier:insert(iconCash)
     
-    local lblTitle = display.newText({
+    lblTitle = display.newText({
         text = "RECOMPENSAS LISTAS PARA CANJEAR:", 
         x = midW, y = midH -270,
         fontSize = 28, width = 700, align = "left",
@@ -300,13 +365,19 @@ function scene:create( event )
 		horizontalScrollDisabled = true,
         hideBackground = true
 	}
+    scrRedens.anchorY = 0
     scrRedens.x = midW
-    scrRedens.y = midH + 60
+    scrRedens.y = 170
 	grpCashier:insert(scrRedens)
+    
+    grpLstRen = display.newGroup()
+    grpLstRen.anchorY = 0
+	scrRedens:insert(grpLstRen)
     
     --Obtener redenciones
     cashierId = event.params.user.id
     RestManager.getRedenciones()
+    rotateScr()
 end	
 
 -- Called immediately after scene has moved onscreen:
