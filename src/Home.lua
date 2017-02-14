@@ -166,8 +166,8 @@ function toCamera(event)
     -- Validas conexion
     if RestManager.networkConnection() then
         audio.play( fxTap )
-        if OpenCamera then
-            OpenCamera.init()
+        if readQR then
+            readQR.init()
         else
             --validate('4000000000001641') --User
             validate('1021444472002964') --Cashier

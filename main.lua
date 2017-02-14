@@ -15,6 +15,7 @@ local function onSystemEvent(event)
         ("src.Home" == composer.getSceneName( "current" )
         or "src.Cash" == composer.getSceneName( "current" ) )then
         config = DBManager.getSettings()
+        print("QR: ",config.qr)
         if config.qr == '' then
         else
             DBManager.clearQR()
@@ -30,7 +31,7 @@ local function onOrientationChange( event )
     rotateScr()
 	
 end
-Runtime:addEventListener( "orientation", onOrientationChange )
+--Runtime:addEventListener( "orientation", onOrientationChange )
 
 
 DBManager.setupSquema() 
