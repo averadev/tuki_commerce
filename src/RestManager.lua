@@ -141,7 +141,7 @@ local RestManager = {}
     -- Obtener Recomensas
     ------------------------------------
     RestManager.getRewards = function()
-		local url = site.."commerce/getRewards/format/json/idCommerce/"..dbConfig.idCommerce
+		local url = site.."commerce/getRewards/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch
         print(url)
         local function callback(event)
             if ( event.isError ) then
@@ -153,6 +153,7 @@ local RestManager = {}
                             logoCom = data.logo[1].image
                         end
                     end
+                    if data.checkEmp then cambiaCajero(data.checkEmp, false) end
                     loadImage({idx = 0, method = '', path = "assets/img/api/commerce/", items = data.logo})
                     loadImage({idx = 0, method = 'HomeR', path = "assets/img/api/rewards/", items = data.items})
                 else
@@ -164,6 +165,34 @@ local RestManager = {}
         -- Do request
         network.request( url, "GET", callback )
 	end
+
+    -------------------------------------
+    -- CheckIn Empleado
+    -- @param qr codigo tarjeta
+    ------------------------------------
+    RestManager.checkEmp = function(qr)
+        local url = site.."commerce/checkEmp/format/json/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/lastEmp/"..idCheckEmp
+        print(url)
+        local function callback(event)
+            if ( event.isError ) then
+            else
+                local data = json.decode(event.response)
+                if data.success then
+                    if data.item then
+                        cambiaCajero(data.item, true)
+                    else
+                        qrError(true) 
+                    end
+                else
+                    qrError(false)
+                end
+                
+            end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+    end
 
     -------------------------------------
     -- Validar QR

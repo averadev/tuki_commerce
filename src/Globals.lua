@@ -11,6 +11,8 @@ midW = display.contentCenterX
 midH = display.contentCenterY
 hm3 = intH / 3
 h = display.topStatusBarContentHeight
+squema = 1
+idCheckEmp = 0
 logoCom = ''
 position = 'portrait'
 

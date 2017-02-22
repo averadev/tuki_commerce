@@ -2,11 +2,14 @@ local composer = require( "composer" )
 local Sprites = require('src.Sprites')
 local RestManager = require( "src.RestManager" )
 local fxTap = audio.loadSound( "fx/tap.wav")
+local fxCash = audio.loadSound( "fx/cash.wav")
 require('src.Globals')
 
 -- Grupos y Contenedores
 local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM, grpMsgS, bgScr, lblVersion
-local timerBottom, lblHPoints, lblHPoints2, lblHDesc, imgHReward, loading, txtExit, itsPoints = false
+local timerBottom, lblHPoints, lblHPoints2, lblHDesc, imgHReward, loading, txtExit, iconEmp, nomEmp
+local itsPoints = false
+local checkEmp = false
 local xtraW, bgBottom1, bgBottom2, bgPointsHome, phone, grpBtnGo, logoTuki, bgImgRew, iconPoints
 local scene = composer.newScene()
 
@@ -28,6 +31,7 @@ function rotateScr()
     bgBottom2.width = intW
     bgBottom2.x = midW
     iconPoints.x = intW - 30
+    iconEmp.x = midW
     bgImgRew.x = intW - 160
     lblVersion.x = intW - 70
     lblVersion.y = intH - 20
@@ -159,18 +163,33 @@ function qrError(isCashier)
 end
 
 -------------------------------------
+-- Validamos Cajero
+-- @param event objeto evento
+------------------------------------
+function cambiaCajero(emp, isSound)
+    if isSound then
+        audio.play( fxCash )
+    end
+    if emp.id then 
+        idCheckEmp = emp.id
+    else
+        idCheckEmp = 0
+    end
+    nomEmp.text = emp.nombre
+end
+
+-------------------------------------
 -- Mostramos Camara
 -- @param event objeto evento
 ------------------------------------
 function toCamera(event)
     -- Validas conexion
     if RestManager.networkConnection() then
-        audio.play( fxTap )
         if readQR then
             readQR.init()
         else
-            --validate('4000000000001641') --User
-            validate('1021444472002964') --Cashier
+            validate('4000000000001641') --User
+            --validate('1021444472002964') --Cashier
             --validate('4000000000001641-27') --UserReward
         end
     else
@@ -187,6 +206,9 @@ function validate(qr)
     if itsPoints then
         itsPoints = false
         RestManager.checkPoints(qr)
+    elseif checkEmp then
+        checkEmp = false
+        RestManager.checkEmp(qr)
     elseif string.len(qr) == 16 then
         RestManager.validateQR(qr)
     elseif string.len(qr) > 16 then
@@ -553,6 +575,26 @@ function scene:create( event )
     iconExit.y = 40
     iconExit:addEventListener( 'tap', showExit) 
     screen:insert(iconExit)
+    
+    iconEmp = display.newImage( "img/iconEmp.png" )
+    iconEmp.x = midW
+    iconEmp.y = 40
+    iconEmp:addEventListener( 'tap', function()
+        checkEmp = true
+        toCamera()
+    end) 
+    screen:insert(iconEmp)
+    
+    nomEmp = display.newText({
+        text = "", 
+        x = midW + 230, y = 45,
+        width = 400,
+        font = fontRegular,   
+        fontSize = 20, align = "left"
+    })
+    nomEmp:setFillColor( 1 )
+    nomEmp.alpha = .5
+    screen:insert(nomEmp)
     
     iconPoints = display.newImage( "img/iconPoints.png" )
     iconPoints.x = intW - 30
