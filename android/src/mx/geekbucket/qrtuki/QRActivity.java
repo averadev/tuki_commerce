@@ -19,7 +19,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
-import android.os.Handler;
+import android.os.*;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -33,11 +33,13 @@ import android.os.Handler;
  */
 public class QRActivity extends Activity {
     private MediaPlayer mpCamera;
+    private MediaPlayer mpTick;
     private Camera mCamera;
     private CameraPreview mPreview;
     private Handler autoFocusHandler;
     private boolean previewing = true;
     private MyDBHandler db;
+    private CountDownTimer aCounter;
     
     static {
         System.loadLibrary("iconv");
@@ -63,14 +65,30 @@ public class QRActivity extends Activity {
         preview.addView(mPreview);
         
         mpCamera = MediaPlayer.create(this, R.raw.camera);
+        mpTick = MediaPlayer.create(this, R.raw.tick);
         
         // Listening to back button
 		ImageView backButton = (ImageView) findViewById(R.id.backbutton);
 		backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                aCounter.cancel();
+                aCounter=null;
                 finish();
             }
         });
+        
+        // Timer
+        aCounter = new CountDownTimer(20000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                if (millisUntilFinished <= 5000){
+                    mpTick.seekTo(0);
+                    mpTick.start();
+                }
+            }
+            public void onFinish() {
+                finish();
+            }
+        }.start();
     }
     
 	public void onPause() {
@@ -127,11 +145,15 @@ public class QRActivity extends Activity {
 		        SymbolSet syms = scanner.getResults();
 		        
 		        for (Symbol sym : syms) {
-
+                    System.out.println("QR Java "+sym.getData());
 		        	mpCamera.start();
                     db = new MyDBHandler(getApplicationContext());
                     db.updateQR(sym.getData());
 		        }
+                
+                aCounter.cancel();
+                aCounter=null;
+                
 				scanner.destroy();
 				barcode.destroy();
 				scanner = null;

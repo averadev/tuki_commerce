@@ -32,7 +32,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         
         // updating row
         System.out.println("Corona QR: "+qr);
-        String strSQL = "UPDATE config SET qr = "+ qr;
+        String strSQL = "UPDATE config SET qr = '"+ qr + "'";
         db.execSQL(strSQL);
         return 1;
     }
