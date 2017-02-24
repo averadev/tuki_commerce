@@ -187,7 +187,6 @@ function toCamera(event)
     if isQrReady then
         isQrReady = false
         timer.performWithDelay( 1500, function() isQrReady = true end )
-        print("-----1")
         if RestManager.networkConnection() then
             if readQR then
                 readQR.init()
