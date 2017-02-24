@@ -15,6 +15,7 @@ squema = 1
 idCheckEmp = 0
 logoCom = ''
 position = 'portrait'
+isQrReady = true
 
 -- Fonts
 fontLight = 'Raleway Light'

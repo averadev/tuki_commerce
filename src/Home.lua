@@ -184,16 +184,21 @@ end
 ------------------------------------
 function toCamera(event)
     -- Validas conexion
-    if RestManager.networkConnection() then
-        if readQR then
-            readQR.init()
+    if isQrReady then
+        isQrReady = false
+        timer.performWithDelay( 1500, function() isQrReady = true end )
+        print("-----1")
+        if RestManager.networkConnection() then
+            if readQR then
+                readQR.init()
+            else
+                validate('4000000000001641') --User
+                --validate('1021444472002964') --Cashier
+                --validate('4000000000001641-27') --UserReward
+            end
         else
-            validate('4000000000001641') --User
-            --validate('1021444472002964') --Cashier
-            --validate('4000000000001641-27') --UserReward
+            showMsg("Asegurese de estar conectado a internet")
         end
-    else
-        showMsg("Asegurese de estar conectado a internet")
     end
     return true
 end
