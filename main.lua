@@ -39,6 +39,8 @@ local dbConfig = DBManager.getSettings()
 if dbConfig.idBranch == 0 then
     composer.gotoScene("src.Login")
 else
+    idCheckEmp = dbConfig.idComUser
+    idCheckEmpN = dbConfig.nameUser
     composer.gotoScene("src.Home")
     
     --composer.gotoScene("src.Cash")

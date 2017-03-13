@@ -9,7 +9,7 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    local site = "http://tukicard.com/beta_ws/"
+    local site = "http://localhost/tuki_ws/"
     --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
@@ -153,7 +153,7 @@ local RestManager = {}
                             logoCom = data.logo[1].image
                         end
                     end
-                    if data.checkEmp then cambiaCajero(data.checkEmp, false) end
+                    
                     loadImage({idx = 0, method = '', path = "assets/img/api/commerce/", items = data.logo})
                     loadImage({idx = 0, method = 'HomeR', path = "assets/img/api/rewards/", items = data.items})
                 else
@@ -179,6 +179,9 @@ local RestManager = {}
                 local data = json.decode(event.response)
                 if data.success then
                     if data.item then
+                        if data.item.id then 
+                            DBManager.updateComUser(data.item.id, data.item.nombre)
+                        end
                         cambiaCajero(data.item, true)
                     else
                         qrError(true) 
@@ -218,7 +221,7 @@ local RestManager = {}
     -- @param qr codigo tarjeta
     ------------------------------------
     RestManager.updPts = function(qr, val, ticket)
-        local url = site.."commerce/updPts/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/val/"..val.."/ticket/"..ticket
+        local url = site.."commerce/updPts/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/val/"..val.."/ticket/"..ticket.."/idCheckEmp/"..idCheckEmp
         print(url)
         local function callback(event)
             if ( event.isError ) then
@@ -244,7 +247,7 @@ local RestManager = {}
     -- @param qr codigo tarjeta
     ------------------------------------
     RestManager.validateQR = function(qr)
-		local url = site.."commerce/validateQR/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr
+		local url = site.."commerce/validateQR/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/idCheckEmp/"..idCheckEmp
         print(url)
         local function callback(event)
             if ( event.isError ) then
@@ -308,7 +311,7 @@ local RestManager = {}
     -- @param points puntos a descontar
     ------------------------------------
     RestManager.insertRedemption = function(idUser, idReward, points)
-		local url = site.."commerce/insertRedemption/format/json/status/1/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/idReward/"..idReward.."/idUser/"..idUser.."/points/"..points
+		local url = site.."commerce/insertRedemption/format/json/status/1/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/idReward/"..idReward.."/idUser/"..idUser.."/points/"..points.."/idCheckEmp/"..idCheckEmp
         print(url)
         local function callback(event)
             if ( event.isError ) then

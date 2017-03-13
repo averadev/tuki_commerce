@@ -192,7 +192,7 @@ function toCamera(event)
                 readQR.init()
             else
                 validate('4000000000001641') --User
-                --validate('1021444472002964') --Cashier
+                --validate('1029335115002197') --Cashier
                 --validate('4000000000001641-27') --UserReward
             end
         else
@@ -590,7 +590,7 @@ function scene:create( event )
     screen:insert(iconEmp)
     
     nomEmp = display.newText({
-        text = "", 
+        text = idCheckEmpN, 
         x = midW + 230, y = 45,
         width = 400,
         font = fontRegular,   

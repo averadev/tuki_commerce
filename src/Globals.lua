@@ -13,6 +13,7 @@ hm3 = intH / 3
 h = display.topStatusBarContentHeight
 squema = 1
 idCheckEmp = 0
+idCheckEmpN = ''
 logoCom = ''
 position = 'portrait'
 isQrReady = true

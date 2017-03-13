@@ -36,6 +36,28 @@ local dbManager = {}
 			db:close()
 		end     
 	end
+    
+    local function actualizarDB(table, column, typeC, value)
+		-- Verify Version APP
+        local oldVersion = true
+		for row in db:nrows("PRAGMA table_info("..table..");") do
+            if row.name == column then
+                oldVersion = false
+            end
+        end
+    
+        if oldVersion then
+            local query = "ALTER TABLE "..table.." ADD COLUMN "..column.." "..typeC..";"
+            db:exec( query )
+        
+            local query = "UPDATE "..table.." SET "..column.." = '"..value.."';"
+            if typeC == 'INTEGER' then
+                query = "UPDATE "..table.." SET "..column.." = "..value..";"
+            end
+            print(query)
+            db:exec( query )
+        end
+	end
 	 
 	-- Handle the applicationExit event to close the db
 	local function onSystemEvent( event )
@@ -60,6 +82,14 @@ local dbManager = {}
 		closeConnection( )
 	end
 
+    dbManager.updateComUser = function(idComUser, nameUser)
+		openConnection( )
+        local query = ''
+        query = "UPDATE config SET idComUser = "..idComUser..", nameUser = '"..nameUser.."';"
+        db:exec( query )
+		closeConnection( )
+	end
+
 	-- obtiene los datos de configuracion
 	dbManager.getSettings = function()
 		local result = {}
@@ -78,13 +108,16 @@ local dbManager = {}
 		
 		local query = "CREATE TABLE IF NOT EXISTS config (id TEXT PRIMARY KEY, idCommerce INTEGER, idBranch INTEGER, logo TEXT, qr TEXT);"		
         db:exec( query )
+    
+        actualizarDB("config", "idComUser", "INTEGER", 0)
+        actualizarDB("config", "nameUser", "TEXT", "")
 
         for row in db:nrows("SELECT * FROM config;") do
             closeConnection( )
 			do return end
 		end
 
-        query = "INSERT INTO config VALUES (1, 0, 0, '', '');"
+        query = "INSERT INTO config VALUES (1, 0, 0, '', '', 0, '');"
         
 		db:exec( query )
     
@@ -92,6 +125,7 @@ local dbManager = {}
     
         return 1
 	end
+    
 	
 	-- Setup the system listener to catch applicationExit
 	Runtime:addEventListener( "system", onSystemEvent )
