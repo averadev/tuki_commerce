@@ -7,7 +7,7 @@ require('src.Globals')
 
 -- Grupos y Contenedores
 local screen, grpBottom, rewardsH, grpHome, grpMsgH, grpMsgM, grpMsgS, bgScr, lblVersion
-local timerBottom, lblHPoints, lblHPoints2, lblHDesc, imgHReward, loading, txtExit, iconEmp, nomEmp
+local timerBottom, timerLog, lblHPoints, lblHPoints2, lblHDesc, imgHReward, loading, txtExit, iconEmp, nomEmp
 local itsPoints = false
 local checkEmp = false
 local xtraW, bgBottom1, bgBottom2, bgPointsHome, phone, grpBtnGo, logoTuki, bgImgRew, iconPoints
@@ -488,6 +488,13 @@ function showExit()
 end
 
 -------------------------------------
+-- Registramos conexion exitosa
+------------------------------------
+function logBranchDevice() 
+    RestManager.logBranchDevice()
+end
+
+-------------------------------------
 -- Muestra loading sprite
 -- @param isLoading activar/desactivar
 ------------------------------------
@@ -720,9 +727,9 @@ function scene:create( event )
     loading:play()
     
     lblVersion = display.newText({
-        text = "2.0", align = "right",
+        text = system.getInfo( "appVersionString" ),
         x = intW-70, y = intH - 20, width = 100,
-        font = fontSemiBold, fontSize = 14
+        align = "right", font = fontSemiBold, fontSize = 14
     })
     lblVersion:setFillColor( 1 )
     lblVersion.alpha = .3
@@ -741,6 +748,8 @@ end
 function scene:show( event )
     if ( event.phase == "will" ) then
         rotateScr()
+        -- Verify always connection
+        timerLog = timer.performWithDelay( 600000, logBranchDevice, 0)
     end
 end
 
@@ -748,6 +757,7 @@ end
 function scene:hide( event )
     if ( event.phase == "will" ) then
         timer.cancel(timerBottom)
+        timer.cancel(timerLog)
     end 
 end
 

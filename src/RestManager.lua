@@ -9,8 +9,8 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    --local site = "http://localhost/tuki_ws/"
-    local site = "http://mytuki.com/api/"
+    local site = "http://192.168.1.70/tuki_ws/"
+    --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
     -- Encode URL
@@ -142,7 +142,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.getRewards = function()
 		local url = site.."commerce/getRewards/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -172,7 +172,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.checkEmp = function(qr)
         local url = site.."commerce/checkEmp/format/json/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/lastEmp/"..idCheckEmp
-        print(url)
+       
         local function callback(event)
             if ( event.isError ) then
             else
@@ -203,7 +203,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.checkPoints = function(qr)
         local url = site.."commerce/checkPoints/format/json/idCommerce/"..dbConfig.idCommerce.."/qr/"..qr
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -222,7 +222,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.updPts = function(qr, val, ticket)
         local url = site.."commerce/updPts/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/val/"..val.."/ticket/"..ticket.."/idCheckEmp/"..idCheckEmp
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -248,7 +248,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.validateQR = function(qr)
 		local url = site.."commerce/validateQR/format/json/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/qr/"..qr.."/idCheckEmp/"..idCheckEmp
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -279,7 +279,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.validateQrReward = function(qr)
 		local url = site.."commerce/validateQrReward/format/json/idCommerce/"..dbConfig.idCommerce.."/qr/"..qr
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -312,7 +312,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.insertRedemption = function(idUser, idReward, points)
 		local url = site.."commerce/insertRedemption/format/json/status/1/idCommerce/"..dbConfig.idCommerce.."/idBranch/"..dbConfig.idBranch.."/idReward/"..idReward.."/idUser/"..idUser.."/points/"..points.."/idCheckEmp/"..idCheckEmp
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -333,7 +333,27 @@ local RestManager = {}
     ------------------------------------
     RestManager.setRedemption = function(status, idRedemption, idCashier, points)
 		local url = site.."commerce/setRedemption/format/json/status/"..status.."/idCommerce/"..dbConfig.idCommerce.."/idRedemption/"..idRedemption.."/idCashier/"..idCashier.."/points/"..points
-        print(url)
+        
+        local function callback(event)
+            if ( event.isError ) then
+            else
+                local data = json.decode(event.response)
+            end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+	end
+
+    -------------------------------------
+    -- Actualizar Redencion
+    -- @param status Tipo actualizacion
+    -- @param idUser Id Usuario
+    -- @param points puntos a descontar
+    ------------------------------------
+    RestManager.setMultiRedemption = function(ids, idCashier)
+		local url = site.."commerce/setMultiRedemption/format/json/idCommerce/"..dbConfig.idCommerce.."/ids/"..ids.."/idCashier/"..idCashier
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -352,7 +372,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.getRedenciones = function(idUser, points)
 		local url = site.."commerce/getRedenciones/format/json/idBranch/"..dbConfig.idBranch
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -373,7 +393,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.updateUser = function(idUser, name, email)
 		local url = site.."commerce/updateUser/format/json/idUser/"..idUser.."/name/"..urlencode(name).."/email/"..urlencode(email)
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -392,7 +412,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.verifyPassword = function(password)
 		local url = site.."commerce/verifyPassword/format/json/password/"..password
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -417,7 +437,7 @@ local RestManager = {}
     ------------------------------------
     RestManager.validateExit = function(password)
 		local url = site.."commerce/validateExit/format/json/idBranch/"..dbConfig.idBranch.."/password/"..password
-        print(url)
+        
         local function callback(event)
             if ( event.isError ) then
             else
@@ -429,6 +449,19 @@ local RestManager = {}
                     showMsg("Clave incorrecta :(")
                 end
             end
+            return true
+        end
+        -- Do request
+        network.request( url, "GET", callback )
+	end
+
+    -------------------------------------
+    -- Registramos conexion exitosa
+    ------------------------------------
+    RestManager.logBranchDevice = function()
+		local url = site.."commerce/logBranchDevice/format/json/idBranch/"..dbConfig.idBranch.."/deviceID/"..system.getInfo( "deviceID" )
+        print(url)
+        local function callback(event)
             return true
         end
         -- Do request

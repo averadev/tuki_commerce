@@ -1,5 +1,6 @@
 local composer = require( "composer" )
 local widget = require( "widget" )
+local Sprites = require('src.Sprites')
 local RestManager = require( "src.RestManager" )
 local fxTap = audio.loadSound( "fx/tap.wav")
 local fxCash = audio.loadSound( "fx/cash.wav")
@@ -8,9 +9,11 @@ require('src.Globals')
 -- Grupos y Contenedores
 local scene = composer.newScene()
 local screen, cashierId, scrRedens, grpCashier, grpRedens, lblRTitle, lblRUser
-local bgScr, lblTitle, btnBack, iconCash, grpLstRen
+local bgScr, lblTitle, lblTitle2, bgCheck, iconCheck, btnBack, iconCash, grpLstRen, grpMultiReden
 local scrRH = 0
+local noMulti = 0
 local redens = {}
+local doMark = {}
 
 
 -------------------------------------
@@ -32,7 +35,13 @@ function rotateScr()
         iconCash.x = midW + 440
         iconCash.y = 110
         lblTitle.x = midW
-        lblTitle.y = midH -270
+        lblTitle.y = midH - 320
+        bgCheck.x = midW - 150
+        bgCheck.y = midH - 255
+        iconCheck.x = midW - 325
+        iconCheck.y = midH - 255
+        lblTitle2.x = midW + 50
+        lblTitle2.y = midH - 265
         scrRedens.x = midW
         scrRedens.y = 170
         grpLstRen.y = 0
@@ -54,6 +63,28 @@ function rotateScr()
     end
 end
 
+-------------------------------------
+-- Regresamos a Home
+-- @param event objeto evento
+------------------------------------
+function tapGoCheck(event)
+    audio.play( fxTap )
+    local t = event.target
+    if t.isCheck then
+        t.isCheck = false
+        iconCheck:setSequence("uncheck")
+        grpMultiReden.alpha = 0
+        for z = 1, #doMark, 1 do
+            doMark[z].alpha = 0
+        end
+    else
+        noMulti = 0
+        t.isCheck = true
+        iconCheck:setSequence("check")
+        grpRedens.alpha = 0
+    end
+    return true
+end
 
 -------------------------------------
 -- Regresamos a Home
@@ -76,12 +107,31 @@ function tapCash(event)
 end
 
 -------------------------------------
+-- Multiseleccion redencion
+-- @param event objeto evento
+------------------------------------
+function tapMultiReden(event)
+    showMsg("msgToRedem")
+    local ids = ''
+    for z = 1, #doMark, 1 do
+        if doMark[z].alpha == 1 then
+            if z == 1 then
+                ids = doMark[z].id
+            else
+                ids = ids..'-'..doMark[z].id
+            end    
+        end    
+    end
+    RestManager.setMultiRedemption(ids, cashierId)
+    return true
+end
+
+-------------------------------------
 -- Seleccion redencion
 -- @param event objeto evento
 ------------------------------------
 function tapToReden(event)
     showMsg("msgToRedem")
-    -- Hacer valida la redencion
     RestManager.setRedemption(2, grpRedens.reden.id, cashierId, grpRedens.reden.points)
     return true
 end
@@ -143,15 +193,32 @@ end
 function tapReden(event)
     audio.play( fxTap )
     local idx = event.target.idx
-    grpRedens.alpha = 1
-    grpRedens.y = event.target.y
-    grpRedens.reden = redens[idx].reden
-    lblRTitle.text = redens[idx].reden.reward
-    local userName = ''
-    if redens[idx].reden.user then
-        userName = redens[idx].reden.user
+    if bgCheck.isCheck then
+        -- Multiselector
+        if grpRedens.alpha == 1 then
+            grpRedens.alpha = 0
+        end
+        if doMark[idx].alpha == 1 then
+            noMulti = noMulti - 1
+            doMark[idx].alpha = 0
+            if noMulti == 0 then grpMultiReden.alpha = 0 end 
+        else
+            noMulti = noMulti + 1
+            grpMultiReden.alpha = 1
+            doMark[idx].alpha = 1
+        end
+    else
+        -- One selector
+        grpRedens.alpha = 1
+        grpRedens.y = event.target.y
+        grpRedens.reden = redens[idx].reden
+        lblRTitle.text = redens[idx].reden.reward
+        local userName = ''
+        if redens[idx].reden.user then
+            userName = redens[idx].reden.user
+        end
+        lblRUser.text = userName
     end
-    lblRUser.text = userName
     return true
 end
 
@@ -231,6 +298,12 @@ function showRedenciones(data)
         })
         lblReward:setFillColor( unpack(cMarine) )
         grpLstRen:insert( lblReward )
+                
+        doMark[z] = display.newImage( "img/doMark.png" )
+        doMark[z].id = items[z].id
+        doMark[z].alpha = 0
+        doMark[z]:translate(665, curY - 35)
+        grpLstRen:insert( doMark[z] )
         
     end
     scrRH = #items * 155
@@ -349,7 +422,7 @@ function scene:create( event )
     
     lblTitle = display.newText({
         text = "RECOMPENSAS LISTAS PARA CANJEAR:", 
-        x = midW, y = midH -270,
+        x = midW, y = midH - 320,
         fontSize = 28, width = 700, align = "left",
         font = fontSemiBold,   
         
@@ -357,6 +430,57 @@ function scene:create( event )
     lblTitle.anchorY = 0
     lblTitle:setFillColor( 1 )
     grpCashier:insert(lblTitle)
+    
+    bgCheck = display.newRect( midW - 150, midH - 255, 400, 50 )
+    bgCheck.alpha = .01
+    bgCheck.isCheck = false
+    bgCheck:addEventListener( 'tap', tapGoCheck)
+    screen:insert(bgCheck)
+    
+    local sheet = graphics.newImageSheet(Sprites.iconCheck.source, Sprites.iconCheck.frames)
+    iconCheck = display.newSprite(sheet, Sprites.iconCheck.sequences)
+    iconCheck.x = midW - 30
+    iconCheck.y = midH - 270
+    grpCashier:insert(iconCheck)
+    
+    lblTitle2 = display.newText({
+        text = "MARCAR VARIAS COMO CANJEADAS", 
+        x = midW + 50, y = midH - 270,
+        fontSize = 20, width = 700, align = "left",
+        font = fontSemiBold,   
+        
+    })
+    lblTitle2.anchorY = 0
+    grpCashier:insert(lblTitle2)
+    
+    grpMultiReden = display.newContainer( 140, 180 )
+    grpMultiReden.alpha = 0
+    grpMultiReden:translate( midW + 280, midH - 260 )
+    grpCashier:insert(grpMultiReden)
+    
+    local bgToReden = display.newRoundedRect( 0, 0, 140, 80, 5 )
+    bgToReden:setFillColor( unpack(cAqua) )
+    bgToReden:addEventListener( 'tap', tapMultiReden)
+    grpMultiReden:insert( bgToReden )
+    
+    local bgReden = display.newRoundedRect( 0, 0, 134, 74, 5 )
+    bgReden:setFillColor( {
+        type = 'gradient',
+        color1 = { unpack(cTurquesa) }, 
+        color2 = { unpack(cPurPle) },
+        direction = "bottom"
+    } )
+    grpMultiReden:insert( bgReden )
+    
+    local lblReden = display.newText({
+        text = "CANJEAR",
+        x = 0, y = 0,
+        fontSize = 20,
+        font = fontSemiBold,   
+
+    })
+    lblReden:setFillColor( 1 )
+    grpMultiReden:insert( lblReden )
     
     scrRedens = widget.newScrollView
 	{

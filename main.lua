@@ -41,8 +41,8 @@ if dbConfig.idBranch == 0 then
 else
     idCheckEmp = dbConfig.idComUser
     idCheckEmpN = dbConfig.nameUser
-    composer.gotoScene("src.Home")
     
+    composer.gotoScene("src.Home")
     --composer.gotoScene("src.Cash")
     
     --[[ 
@@ -51,11 +51,9 @@ else
     item.points = 100
     item.newPoints = 0
     composer.gotoScene("src.Rewards", { time = 0, params = {user = item} })
-    ]]
     
-    --[[ 
     item = {}
-    item.id = 1021444472002964
+    item.id = 1029335115002197
     composer.gotoScene("src.Cashier", { time = 0, params = {user = item} })
     ]]
 end
