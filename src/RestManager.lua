@@ -10,7 +10,7 @@ local RestManager = {}
     local dbConfig = DBManager.getSettings()
 
     --local site = "http://192.168.1.70/tuki_ws/"
-    local site = "http://tukicard.com/beta_ws/"
+    local site = "http://mytuki.com/api/"
 	
     -------------------------------------
     -- Encode URL

@@ -8,7 +8,7 @@ local dbManager = {}
 	-- Open rackem.db.  If the file doesn't exist it will be created
 	local function openConnection( )
         local pathBase = system.pathForFile(nil, system.DocumentsDirectory)
-        if findLast(pathBase, "/data/data") > -1 then
+        if findLast(pathBase, "/data/data") > -1 or findLast(pathBase, "/data/user") > -1 then
             local newFile = pathBase:gsub("/app_data", "") .. "/databases/tuki.db"
             local fhd = io.open( newFile )
             if fhd then
