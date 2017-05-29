@@ -191,8 +191,8 @@ function toCamera(event)
             if readQR then
                 readQR.init()
             else
-                validate('4000000000001641') --User
-                --validate('1029335115002197') --Cashier
+                --validate('4000000000001641') --User
+                validate('1021238449002901') --Cashier
                 --validate('4000000000001641-27') --UserReward
             end
         else

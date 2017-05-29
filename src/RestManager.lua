@@ -9,8 +9,8 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    --local site = "http://192.168.1.70/tuki_ws/"
-    local site = "http://mytuki.com/api/"
+    local site = "http://tukicard.com/beta_ws/"
+    --local site = "http://mytuki.com/api/"
 	
     -------------------------------------
     -- Encode URL
@@ -119,7 +119,9 @@ local RestManager = {}
                 if ( event.isError ) then
                 else
                     if parent then
-                        parent:insert(event.target)
+                        if event.target then
+                            parent:insert(event.target)
+                        end
                     end
                 end
             end
