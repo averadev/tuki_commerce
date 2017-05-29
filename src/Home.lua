@@ -191,8 +191,8 @@ function toCamera(event)
             if readQR then
                 readQR.init()
             else
-                --validate('4000000000001641') --User
-                validate('1029335115002197') --Cashier
+                validate('4000000000001641') --User
+                --validate('1029335115002197') --Cashier
                 --validate('4000000000001641-27') --UserReward
             end
         else
@@ -488,13 +488,6 @@ function showExit()
 end
 
 -------------------------------------
--- Registramos conexion exitosa
-------------------------------------
-function logBranchDevice() 
-    RestManager.logBranchDevice()
-end
-
--------------------------------------
 -- Muestra loading sprite
 -- @param isLoading activar/desactivar
 ------------------------------------
@@ -748,8 +741,6 @@ end
 function scene:show( event )
     if ( event.phase == "will" ) then
         rotateScr()
-        -- Verify always connection
-        timerLog = timer.performWithDelay( 600000, logBranchDevice, 0)
     end
 end
 
@@ -757,7 +748,6 @@ end
 function scene:hide( event )
     if ( event.phase == "will" ) then
         timer.cancel(timerBottom)
-        timer.cancel(timerLog)
     end 
 end
 

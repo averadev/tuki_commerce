@@ -7,6 +7,7 @@
 -- Your code here
 require('src.Globals')
 local DBManager = require('src.DBManager')
+local RestManager = require( "src.RestManager" )
 local composer = require( "composer" )
 position = system.orientation
 
@@ -33,6 +34,14 @@ local function onOrientationChange( event )
 end
 --Runtime:addEventListener( "orientation", onOrientationChange )
 
+------------------------------------
+-- Registramos conexion exitosa
+------------------------------------
+function logBranchDevice() 
+    print("logBranchDevice")
+    RestManager.logBranchDevice()
+end
+
 
 DBManager.setupSquema() 
 local dbConfig = DBManager.getSettings()
@@ -41,6 +50,9 @@ if dbConfig.idBranch == 0 then
 else
     idCheckEmp = dbConfig.idComUser
     idCheckEmpN = dbConfig.nameUser
+    
+    -- Verify always connection 600000
+    timerLog = timer.performWithDelay( 600000, logBranchDevice, 0)
     
     composer.gotoScene("src.Home")
     --composer.gotoScene("src.Cash")
