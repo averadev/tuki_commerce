@@ -78,7 +78,7 @@ function toCamera(event)
         if readQR then
             readQR.init()
         else
-            validate('4040000001204974') --Cashier
+            validate('4040000953214251') --Cashier
         end
     else
         showMsg("Asegurese de estar conectado a internet")

@@ -9,8 +9,8 @@ local RestManager = {}
     local DBManager = require('src.DBManager')
     local dbConfig = DBManager.getSettings()
 
-    local site = "http://localhost/tuki_ws/"
-    --local site = "http://mytuki.com/api/"
+    --local site = "http://192.168.1.71/tuki_ws/"
+    local site = "http://mytuki.com/api/"
 	
     -------------------------------------
     -- Encode URL

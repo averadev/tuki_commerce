@@ -8,7 +8,7 @@ require('src.Globals')
 -- Grupos y Contenedores
 local scene = composer.newScene()
 local screen
-local userQrR, rewardQrR, grpQrR
+local userQrR, rewardQrR, grpQrR, bgRedem
 
 
 
@@ -46,6 +46,7 @@ end
 -- @param event objeto evento
 ------------------------------------
 function confirmRedem(event)
+    bgRedem:removeEventListener( 'tap', confirmRedem)
     local grpMsg = display.newGroup()
     grpMsg.alpha = 0
     screen:insert(grpMsg)
@@ -179,7 +180,7 @@ function scene:create( event )
     local bgRedemW = display.newRoundedRect( midW + 350, midH + 175, 200, 100, 10 )
     bgRedemW:setFillColor( unpack(cAqua) )
     grpQrR:insert( bgRedemW )
-    local bgRedem = display.newRoundedRect( midW + 350, midH + 175, 194, 94, 10 )
+    bgRedem = display.newRoundedRect( midW + 350, midH + 175, 194, 94, 10 )
     bgRedem:setFillColor( {
         type = 'gradient',
         color1 = { unpack(cTurquesa) }, 

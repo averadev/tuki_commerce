@@ -14,7 +14,7 @@ local scrRH = 0
 local noMulti = 0
 local redens = {}
 local doMark = {}
-
+local bgToReem, bgToReden, bgAllReden
 
 -------------------------------------
 -- Rotate screen
@@ -111,6 +111,7 @@ end
 -- @param event objeto evento
 ------------------------------------
 function tapMultiReden(event)
+    bgAllReden:removeEventListener( 'tap', tapMultiReden)
     showMsg("msgToRedem")
     local ids = ''
     for z = 1, #doMark, 1 do
@@ -131,6 +132,7 @@ end
 -- @param event objeto evento
 ------------------------------------
 function tapToReden(event)
+    bgToReem:removeEventListener( 'tap', tapToReden)
     showMsg("msgToRedem")
     RestManager.setRedemption(2, grpRedens.reden.id, cashierId, grpRedens.reden.points)
     return true
@@ -141,6 +143,7 @@ end
 -- @param event objeto evento
 ------------------------------------
 function tapToReem(event)
+    bgToReden:removeEventListener( 'tap', tapToReem)
     showMsg("msgToReem")
     -- Hacer invalida la redencion
     RestManager.setRedemption(3, grpRedens.reden.id, cashierId, grpRedens.reden.points)
@@ -318,7 +321,7 @@ function showRedenciones(data)
     bgToR:setFillColor( unpack(cPurPle) )
     grpRedens:insert( bgToR )
     
-    local bgToReden = display.newRoundedRect( 70, 0, 140, 140, 5 )
+    bgToReden = display.newRoundedRect( 70, 0, 140, 140, 5 )
     bgToReden:setFillColor( unpack(cAqua) )
     bgToReden:addEventListener( 'tap', tapToReem)
     grpRedens:insert( bgToReden )
@@ -342,7 +345,7 @@ function showRedenciones(data)
     lblReden:setFillColor( 1 )
     grpRedens:insert( lblReden )
     
-    local bgToReem = display.newRoundedRect( 630, 0, 140, 140, 5 )
+    bgToReem = display.newRoundedRect( 630, 0, 140, 140, 5 )
     bgToReem:setFillColor( unpack(cAqua) )
     bgToReem:addEventListener( 'tap', tapToReden)
     grpRedens:insert( bgToReem )
@@ -458,10 +461,10 @@ function scene:create( event )
     grpMultiReden:translate( midW + 280, midH - 260 )
     grpCashier:insert(grpMultiReden)
     
-    local bgToReden = display.newRoundedRect( 0, 0, 140, 80, 5 )
-    bgToReden:setFillColor( unpack(cAqua) )
-    bgToReden:addEventListener( 'tap', tapMultiReden)
-    grpMultiReden:insert( bgToReden )
+    bgAllReden = display.newRoundedRect( 0, 0, 140, 80, 5 )
+    bgAllReden:setFillColor( unpack(cAqua) )
+    bgAllReden:addEventListener( 'tap', tapMultiReden)
+    grpMultiReden:insert( bgAllReden )
     
     local bgReden = display.newRoundedRect( 0, 0, 134, 74, 5 )
     bgReden:setFillColor( {
