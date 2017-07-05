@@ -7,6 +7,7 @@
 -- Your code here
 require('src.Globals')
 local DBManager = require('src.DBManager')
+DBManager.setupSquema() 
 local RestManager = require( "src.RestManager" )
 local composer = require( "composer" )
 position = system.orientation
@@ -43,7 +44,7 @@ function logBranchDevice()
 end
 
 
-DBManager.setupSquema() 
+
 local dbConfig = DBManager.getSettings()
 if dbConfig.idBranch == 0 then
     composer.gotoScene("src.Login")
